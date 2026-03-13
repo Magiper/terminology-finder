@@ -18,20 +18,16 @@ let html = "";
 
 results.forEach(r => {
 
-html += `<div class="result">`;
+html += `<div class="result-card">`;
 
 html += `<div class="term">${r.term}</div>`;
 
-html += "<ul>";
-
 r.translations.forEach(t=>{
-html += `<li>${t}</li>`;
+html += `<span class="translation">${t}</span>`;
 });
 
-html += "</ul>";
-
 if(r.notes){
-html += `<small>${r.notes}</small>`;
+html += `<div class="notes">${r.notes}</div>`;
 }
 
 html += "</div>";
