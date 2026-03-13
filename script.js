@@ -6,34 +6,64 @@ fetch("terms.json")
     database = data;
 });
 
+let lawDatabase = [];
+
+fetch("laws.json")
+.then(response => response.json())
+.then(data => {
+lawDatabase = data;
+});
+
 document.getElementById("search").addEventListener("input", function(){
+    let query = this.value.toLowerCase();
+    let results = database.filter(item =>
+        item.term.toLowerCase().includes(query)
+    );
 
-let query = this.value.toLowerCase();
+    let html = "";
 
-let results = database.filter(item =>
-    item.term.toLowerCase().includes(query)
-);
+    results.forEach(r => {
 
-let html = "";
+        html += `<div class="result-card">`;
+        html += `<div class="term">${r.term}</div>`;
 
-results.forEach(r => {
+        r.translations.forEach(t=>{
+            html += `<span class="translation">${t}</span>`;
+        });
 
-html += `<div class="result-card">`;
+        if(r.notes){
+            html += `<div class="notes">${r.notes}</div>`;
+        }
 
-html += `<div class="term">${r.term}</div>`;
-
-r.translations.forEach(t=>{
-html += `<span class="translation">${t}</span>`;
+        html += "</div>";
+    });
+    document.getElementById("results").innerHTML = html;
 });
 
-if(r.notes){
-html += `<div class="notes">${r.notes}</div>`;
-}
+document.getElementById("lawSearch").addEventListener("input", function(){
+    let query = this.value.toLowerCase();
 
-html += "</div>";
+    if(query.length < 3){
+        document.getElementById("lawResults").innerHTML = "";
+        return;
+    }
 
-});
+    let results = lawDatabase.filter(item =>
+        item.keywords.some(k => k.includes(query))
+    );
 
-document.getElementById("results").innerHTML = html;
+    let html = "";
 
+    results.forEach(r => {
+        html += `<div class="result-card">`;
+
+        html += `<div class="term">${r.law}</div>`;
+        html += `<strong>${r.article}</strong>`;
+
+        html += `<p><b>English:</b><br>${r.english}</p>`;
+        html += `<p><b>Indonesian:</b><br>${r.indonesian}</p>`;
+
+        html += `</div>`;
+    });
+    document.getElementById("lawResults").innerHTML = html;
 });
