@@ -1,0 +1,25 @@
+[
+    {
+        "term": "Pemasyarakatan",
+        "translations": [
+            "Correctional",
+            "Correctional Services",
+            "Corrections System"
+        ],
+        "notes": "Indonesian prison administration system"
+    },
+    {
+        "term": "Lapas",
+        "translations": [
+            "Prison",
+            "Penitentiary"
+        ]
+    },
+    {
+        "term": "Rutan",
+        "translations": [
+            "Detention Center",
+            "Remand Center"
+        ]
+    }
+]
