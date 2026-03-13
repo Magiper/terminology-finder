@@ -1,0 +1,16 @@
+[
+  {
+    "law": "Nelson Mandela Rules",
+    "article": "Rule 1",
+    "keywords": ["dignity","human dignity","treatment"],
+    "english": "All prisoners shall be treated with the respect due to their inherent dignity and value as human beings.",
+    "indonesian": "Semua narapidana harus diperlakukan dengan penghormatan terhadap martabat dan nilai yang melekat pada diri mereka sebagai manusia."
+  },
+  {
+    "law": "Universal Declaration of Human Rights",
+    "article": "Article 5",
+    "keywords": ["torture","cruel punishment"],
+    "english": "No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.",
+    "indonesian": "Tidak seorang pun boleh disiksa atau diperlakukan secara kejam, tidak manusiawi, atau merendahkan martabat."
+  }
+]
