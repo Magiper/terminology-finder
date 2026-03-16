@@ -27,6 +27,16 @@ document.getElementById("search").addEventListener("input", function(){
         item.term.toLowerCase().includes(query)
     );
 
+    if(results.length > 0){
+        let term = results[0].term;
+        
+        if(!searchHistory.includes(term)){
+            searchHistory.unshift(term);
+        }
+        searchHistory = searchHistory.slice(0,3);
+        localStorage.setItem("history", JSON.stringify(searchHistory));
+    };
+
     let html = "";
 
     results.forEach(r => {
@@ -74,3 +84,26 @@ document.getElementById("lawSearch").addEventListener("input", function(){
     });
     document.getElementById("lawResults").innerHTML = html;
 });
+
+function showHistory(){
+    let html = "";
+    
+    searchHistory.forEach(term => {
+        let item = database.find(d => d.term === term);
+        
+        if(item){
+            html += `<div class="result-card">`;
+            html += `<div class="term">${item.term}</div>`;
+
+            if(item.translations){
+                item.translations.forEach(t=>{
+                    html += `<span class="translation">${t}</span>`;
+                });
+            }
+            html += `</div>`;
+        }
+    });
+    document.getElementById("results").innerHTML = html;
+};
+
+showHistory();
