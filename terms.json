@@ -24,35 +24,35 @@
     },
     {
         "term": "Kementerian",
-        "translation": [
+        "translations": [
             "Ministry"
         ],
         "notes": "Menteri = Minister"
     },
     {
         "term": "Kementerian Imigrasi dan Pemasyarakatan",
-        "translation": [
+        "translations": [
             "Ministry of Immigration and Corrections"
         ],
         "notes": "Nama Jabatan = Minister for Immigration and Corrections of the Republic of Indonesia"
     },
     {
         "term": "Sekretariat Jenderal",
-        "translation": [
+        "translations": [
             "Secretariat General"
         ],
         "notes": "Nama Jabatan = Secretary General"
     },
     {
         "term": "Inspektorat Jenderal",
-        "translation": [
+        "translations": [
             "Inspectorate General"
         ],
         "notes": "Nama Jabatan = Inspector General"
     },
     {
         "term": "Direktorat Jenderal Pemasyarakatan",
-        "translation": [
+        "translations": [
             "Directorate General of Corrections"
         ],
         "notes": "Nama Jabatan = Director General for Corrections"
