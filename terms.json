@@ -1,40 +1,60 @@
 [
     {
         "term": "Pemasyarakatan",
-        "translations": [ "Correctional", "Correctional Services", "Corrections System" ],
+        "translations": [
+            "Correctional",
+            "Correctional Services",
+            "Corrections System"
+        ],
         "notes": "Indonesian prison administration system"
     },
     {
         "term": "Lapas",
-        "translations": [ "Prison", "Penitentiary" ]
+        "translations": [
+            "Prison",
+            "Penitentiary"
+        ]
     },
     {
         "term": "Rutan",
-        "translations": [ "Detention Center", "Remand Center" ]
+        "translations": [
+            "Detention Center",
+            "Remand Center"
+        ]
     },
     {
         "term": "Kementerian",
-        "translation": [ "Ministry" ],
+        "translation": [
+            "Ministry"
+        ],
         "notes": "Menteri = Minister"
     },
     {
         "term": "Kementerian Imigrasi dan Pemasyarakatan",
-        "translation": [ "Ministry of Immigration and Corrections" ],
+        "translation": [
+            "Ministry of Immigration and Corrections"
+        ],
         "notes": "Nama Jabatan = Minister for Immigration and Corrections of the Republic of Indonesia"
     },
     {
         "term": "Sekretariat Jenderal",
-        "translation": [ "Secretariat General" ],
+        "translation": [
+            "Secretariat General"
+        ],
         "notes": "Nama Jabatan = Secretary General"
     },
     {
         "term": "Inspektorat Jenderal",
-        "translation": [ "Inspectorate General" ],
+        "translation": [
+            "Inspectorate General"
+        ],
         "notes": "Nama Jabatan = Inspector General"
     },
     {
         "term": "Direktorat Jenderal Pemasyarakatan",
-        "translation": [ "Directorate General of Corrections" ],
+        "translation": [
+            "Directorate General of Corrections"
+        ],
         "notes": "Nama Jabatan = Director General for Corrections"
     },
     {
