@@ -1,3 +1,4 @@
+let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 let database = [];
 
 fetch("terms.json")
@@ -16,6 +17,12 @@ lawDatabase = data;
 
 document.getElementById("search").addEventListener("input", function(){
     let query = this.value.toLowerCase();
+    
+    if(query.length === 0){
+        showHistory();
+        return;
+    };
+    
     let results = database.filter(item =>
         item.term.toLowerCase().includes(query)
     );
