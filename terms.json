@@ -59,6 +59,8 @@
     },
     {
         "term": "Tata Usaha",
-        "translation": [ "Administration" ]
+        "translations": [
+            "Administration"
+        ]
     }
 ]
