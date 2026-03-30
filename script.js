@@ -44,9 +44,11 @@ document.getElementById("search").addEventListener("input", function(){
         html += `<div class="result-card">`;
         html += `<div class="term">${r.term}</div>`;
 
-        r.translations.forEach(t=>{
-            html += `<span class="translation">${t}</span>`;
-        });
+        if(r.translations){
+            r.translations.forEach(t=>{
+                html += `<span class="translation">${t}</span>`;
+            });
+        }
 
         if(r.notes){
             html += `<div class="notes">${r.notes}</div>`;
