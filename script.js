@@ -106,4 +106,13 @@ function showHistory(){
     document.getElementById("results").innerHTML = html;
 };
 
+let dotsContainer = document.getElementById("dots");
+
+if(dotsContainer){
+    for(let i=0; i<60; i++){
+        let span = document.createElement("span");
+        dotsContainer.appendChild(span);
+    }
+};
+
 showHistory();
