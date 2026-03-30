@@ -9,25 +9,82 @@
 
 body{
   font-family: "Segoe UI", Arial, sans-serif;
-  background:#00223d;
   margin:0;
-  padding:40px;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* MAIN CARD */
 .container{
-  max-width:700px;
-  margin:auto;
+  width: 420px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-h1{
-  text-align:center;
-  color:#d1d7da;
-  margin-bottom:30px;
+/* BACKGROUND DECOR */
+.container::before{
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+  width: 200px;
+  height: 200px;
+  background: rgba(74, 144, 226, 0.1);
+  border-radius: 50%;
+}
+
+.container::after{
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -40px;
+  width: 200%;
+  height: 200%;
+  background: rgba(74, 144, 226, 0.08);
+  border-radius: 50%;
+}
+
+/* LOGO */
+.logo{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #4a90e2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-weight: bold;
+}
+
+/* TITLE */
+.title{
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+/* DIVIDER */
+.divider{
+  height: 2px;
+  background: #e5e7eb;
+  margin: 15px 0 20px;
 }
 
 .search-box{
   width:100%;
-  padding:14px 18px;
+  padding:12px;
+  margin: 10px 0;
   font-size:18px;
   border-radius:8px;
   border:1px solid #ccc;
@@ -40,27 +97,28 @@ h1{
 }
 
 .result-card{
-  background:#f1bf60;
-  padding:18px;
-  margin-top:20px;
-  border-radius:10px;
+  background:#f9fafb;
+  text-align: left;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 8px;
   box-shadow:0 3px 10px rgba(0,0,0,0.06);
 }
 
 .term{
   font-size:20px;
-  font-weight:600;
+  font-weight:bold;
   color:#34495e;
-  margin-bottom:10px;
+  margin-bottom:6px;
 }
 
 .translation{
   background:#eef4ff;
-  padding:6px 10px;
-  border-radius:6px;
+  padding:4px 8px;
+  border-radius:5px;
   display:inline-block;
-  margin:4px;
-  font-size:14px;
+  margin:3px;
+  font-size:13px;
 }
 
 .notes{
@@ -71,9 +129,26 @@ h1{
 
 .footer{
   text-align:center;
-  margin-top:40px;
-  font-size:15px;
+  margin-top:20px;
+  font-size:12px;
   color:#888;
+}
+
+/* DECOR DOTS */
+.dots{
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.dots span{
+  width: 6px;
+  height: 6px;
+  background: #ddd;
+  display: block;
+  border-radius: 2px;
 }
 
 </style>
@@ -84,28 +159,33 @@ h1{
 
 <div class="container">
 
-<h1>Indonesian Terminology Finder</h1>
+<div class="logo">LOGO</div>
 
-<input
-id="search"
-class="search-box"
-placeholder="Type a term..."
->
+<div class="title">
+  DIREKTORAT JENDERAL PEMASYARAKATAN<br>
+  SULAWESI TENGGARA
+</div>
+
+<div class="divider"></div>
+
+<input id="search" class="search-box" placeholder="Cari terminologi...">
+
+<input id="lawSearch" class="search-box" placeholder="Cari hukum internasional...">
 
 <div id="results"></div>
-
-<h1>International Law Finder</h1>
-
-<input
-id="lawSearch"
-class="search-box"
-placeholder="Type keyword (e.g. torture, dignity)"
->
-
 <div id="lawResults"></div>
 
 <div class="footer">
-Terminology Lookup Tool by the Translator Team
+© Translator Team
+</div>
+
+<div class="dots">
+  <!-- decorative squares -->
+  <script>
+    for(let i=0; i<60; i++){
+      document.write("<span></span>");
+    }
+  </script>
 </div>
 
 </div>
@@ -113,5 +193,4 @@ Terminology Lookup Tool by the Translator Team
 <script src="script.js"></script>
 
 </body>
-
 </html>
