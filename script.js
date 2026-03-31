@@ -174,7 +174,7 @@ function renderResults(query){
 
         if(r.translations){
             r.translations.forEach(t=>{
-                html += `<span class="translation">${t}</span>`;
+                html += `<span class="translation">${t}<button onclick="speak('${t}')" class="speak-btn">🔊</button></span>`;
             });
         }
 
@@ -194,6 +194,18 @@ function selectLaw(keyword){
     document.getElementById("lawSuggestions").innerHTML = "";
 
     input.dispatchEvent(new Event("input"));
+};
+
+function speak(text){
+    let utterance = new SpeechSynthesisUtterance(text);
+
+    if(/[a-z]/i.test(text)){
+        utterance.lang = "en-US";
+    }else{
+        utterance.lang = "id-ID";
+    }
+    
+    speechSynthesis.speak(utterance);
 };
 
 let dotsContainer = document.getElementById("dots");
