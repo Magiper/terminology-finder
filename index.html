@@ -8,119 +8,138 @@
 <style>
 
 body{
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
   margin:0;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(#0b2a3a, #0b2a3a);
 }
 
-/* MAIN CARD */
-.container{
-  width: 420px;
-  background: white;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* HERO */
+.hero{
+  height: 240px;
+  background: url("background.jpg") center/cover no-repeat;
   position: relative;
-  overflow: hidden;
 }
 
-/* BACKGROUND DECOR */
-.container::before{
-  content: "";
+/* DARK OVERLAY */
+.overlay{
   position: absolute;
-  bottom: -40px;
-  left: -40px;
-  width: 200px;
-  height: 200px;
-  background: rgba(74, 144, 226, 0.1);
-  border-radius: 50%;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 20, 40, 0.6);
 }
 
-.container::after{
-  content: "";
+/* HERO CONTENT */
+.hero-content{
   position: absolute;
-  top: -40%;
-  right: -40px;
-  width: 200%;
-  height: 200%;
-  background: rgba(74, 144, 226, 0.08);
-  border-radius: 50%;
-  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #ffd166;
 }
 
 /* LOGO */
 .logo{
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #4a90e2;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 10px;
-  font-weight: bold;
+  width: 70px;
+  margin-bottom: 10px;
 }
 
-/* TITLE */
-.title{
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
+.hero h1{
+  font-size: 22px;
   line-height: 1.4;
 }
 
-/* DIVIDER */
-.divider{
-  height: 2px;
-  background: #e5e7eb;
-  margin: 15px 0 20px;
-}
-
-.search-box{
-  width:100%;
-  padding:12px;
-  margin: 10px 0;
-  font-size:18px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  box-shadow:0 2px 6px rgba(0,0,0,0.05);
-}
-
-.search-box:focus{
-  outline:none;
-  border-color:#4a90e2;
+.search-panel{
+  width:420px;
+  margin: 20px auto 40px;
+  background: #213a4a;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.5);
 }
 
 .result-card{
-  background:#f9fafb;
-  text-align: left;
+  background:#2b4a5c;
+  margin-top: 10px;
   padding: 10px;
-  margin-top: 15px;
+  border-radius: 6px;
+  color: white;
+}
+
+.input-wrapper{
+  position: relative;
+  margin: 12px 0;
+}
+
+.input-wrapper input{
+  width: 100%;
+  padding: 14px 40px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* ICON */
+.icon{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+/* CLEAR BUTTON */
+.clear{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: none;
+}
+
+/* SHOW CLEAR WHEN TYPING */
+.input-wrapper input:not(:placeholder-shown) + .clear{
+  display: block;
+}
+
+/* DROPDOWN */
+.suggestions{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
   border-radius: 8px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.06);
+  margin-top: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.suggestion-item{
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover{
+  background: #eee;
 }
 
 .term{
-  font-size:20px;
   font-weight:bold;
-  color:#34495e;
-  margin-bottom:6px;
+  margin-bottom:5px;
 }
 
 .translation{
-  background:#eef4ff;
+  background:#4a90e2;
   padding:4px 8px;
-  border-radius:5px;
+  border-radius:4px;
   display:inline-block;
   margin:3px;
-  font-size:13px;
+  font-size:12px;
 }
 
 .notes{
@@ -131,26 +150,9 @@ body{
 
 .footer{
   text-align:center;
-  margin-top:20px;
+  margin-top:15px;
   font-size:12px;
-  color:#888;
-}
-
-/* DECOR DOTS */
-.dots{
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: center;
-}
-
-.dots span{
-  width: 6px;
-  height: 6px;
-  background: #ddd;
-  display: block;
-  border-radius: 2px;
+  color:#ccc;
 }
 
 </style>
@@ -158,32 +160,42 @@ body{
 </head>
 
 <body>
+<!-- HERO SECTION -->
+<div class="hero">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <img src= "logo.png" class="logo">
 
-<div class="container">
+    <h1>
+      DIREKTORAT JENDERAL PEMASYARAKATAN<br>
+      SULAWESI TENGGARA
+    </h1>
 
-<div class="logo">
-  <img src= "logo.png" width= "40">
+  </div>
+  
 </div>
 
-<div class="title">
-  DIREKTORAT JENDERAL PEMASYARAKATAN<br>
-  SULAWESI TENGGARA
-</div>
+<!-- SEARCH PANEL -->
+<div class="search-panel">
 
-<div class="divider"></div>
+  <div class="input-wrapper">
+    <span class="icon">🔍</span>
+    <input id="search" placeholder="Cari terminologi...">
+    <span class="clear" onclick="clearInput('search')">❌</span>
+    <div class="suggestions" id="suggestions"></div>
+  </div>
 
-<input id="search" class="search-box" placeholder="Cari terminologi...">
+  <div class="input-wrapper">
+    <span class="icon">🔍</span>
+    <input id="lawSearch" placeholder="Cari hukum internasional...">
+    <span class="clear" onclick="clearInput('lawSearch')">❌</span>
+    <div class="suggestions" id="lawSuggestions"></div>
+  </div>
 
-<input id="lawSearch" class="search-box" placeholder="Cari hukum internasional...">
+  <div id="results"></div>
+  <div id="lawResults"></div>
 
-<div id="results"></div>
-<div id="lawResults"></div>
-
-<div class="footer">
-© Translator Team
-</div>
-
-<div class="dots" id= "dots"></div>
+  <div class="footer">© Translator Team</div>
 
 </div>
 
