@@ -58,20 +58,29 @@ loadLaws();
 // SEARCH (TERMS)
 // ====================
 document.getElementById("search").addEventListener("input", function(){
+    let query = this.value.trim().toLowerCase();
     document.getElementById("suggestions").style.display = "block";
+
+    if(query === ""){
+        showHistory();
+        clearSuggestions("suggestions");
+        return;
+    }
+    
+    let results = filterTerms(query);
+
+    updateHistory(results);
+    renderSuggestions(results, "suggestions", "selectSuggestion");
+});
+
+document.getElementById("search").addEventListener("keydown", function(e){
     if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
-    
-        if(query === ""){
-            showHistory();
-            clearSuggestions("suggestions");
-            return;
-        };
-    
+
         let results = filterTerms(query);
 
-        updateHistory(results);
-        renderSuggestions(results, "suggestions", "selectSuggestion");
+        clearSuggestions("suggestions");
+        renderResults(results);
     }
 });
 
