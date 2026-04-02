@@ -15,7 +15,7 @@ let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 // LOAD DATA
 // =====================
 async function loadTerms(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/terms`, {
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/term-db`, {
         method: "GET",
         headers: {
             "apikey": SUPABASE_KEY,
@@ -34,15 +34,17 @@ async function loadTerms(){
 }
 
 async function loadLaws(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/laws`, {
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/law-db`, {
+        method: "GET",
         headers: {
             "apikey": SUPABASE_KEY,
             "Authorization": `Bearer ${SUPABASE_KEY}`
+            "Content-Type": "application/json"
         }
     });
 
     if(!res.ok){
-        console.error("Error loading laws");
+        console.error("Error loading laws:", await res.text());
         return;
     }
 
