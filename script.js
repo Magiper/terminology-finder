@@ -59,19 +59,20 @@ loadLaws();
 // ====================
 document.getElementById("search").addEventListener("input", function(){
     document.getElementById("suggestions").style.display = "block";
-    let query = this.value.trim().toLowerCase();
+    if(e.key === "Enter"){
+        let query = this.value.trim().toLowerCase();
     
-    if(query === ""){
-        showHistory();
-        clearSuggestions("suggestions");
-        return;
-    };
+        if(query === ""){
+            showHistory();
+            clearSuggestions("suggestions");
+            return;
+        };
     
-    let results = filterTerms(query);
+        let results = filterTerms(query);
 
-    updateHistory(results);
-    renderResults(results);
-    renderSuggestions(results, "suggestions", "selectSuggestion");
+        updateHistory(results);
+        renderSuggestions(results, "suggestions", "selectSuggestion");
+    }
 });
 
 // ====================
@@ -89,7 +90,6 @@ document.getElementById("lawSearch").addEventListener("input", function(){
 
     let results = filterLaws(query);
     
-    renderLawResults(results);
     renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
 });
 
