@@ -106,6 +106,8 @@ document.getElementById("lawSearch").addEventListener("input", function(){
 // FILTER LOGIC
 // ====================
 function filterTerms(query){
+    query = query.toLowerCase();
+    
     return database.filter(item => {
         let termMatch = item.term.toLowerCase().includes(query);
 
@@ -197,10 +199,11 @@ function clearSuggestions(id){
 // ==================
 function selectSuggestion(term){
     let input = document.getElementById("search");
+    let query = term.toLowerCase();
+    
     input.value = term;
     
     clearSuggestions("suggestions");
-
     document.getElementById("suggestions").style.display = "none";
 
     let results = filterTerms(term);
