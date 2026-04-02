@@ -1,9 +1,19 @@
-let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
-let database = [];
-
-const SUPABASE_URL = "https://ktaubwudmmbdbuwfdvem.supabase.co";
+// =====================
+// CONFIG
+// ===================== 
+const SUPABASE_URL = "https://supabase.com/dashboard/project/ktaubwudmmbdbuwfdvem";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0YXVid3VkbW1iZGJ1d2ZkdmVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzAyNDMsImV4cCI6MjA5MDY0NjI0M30.9NiNYBp7aVWrT_cZ7j3qwjN9DMUuku2gLYEXqlsjAtQ";
 
+// =====================
+// STATE
+// =====================
+let database = [];
+let lawDatabase = [];
+let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
+
+// =====================
+// LOAD DATA
+// =====================
 async function loadTerms(){
     let res = await fetch(`${SUPABASE_URL}/rest/v1/terms`, {
         headers: {
@@ -12,13 +22,14 @@ async function loadTerms(){
         }
     });
 
-    let data = await res.json();
-    database = data;
+    if(!res.ok){
+        console.error("Error loading terms");
+        return;
+    }
+
+    database = await res.json();
     showHistory();
 }
-loadTerms();
-
-let lawDatabase = [];
 
 async function loadLaws(){
     let res = await fetch(`${SUPABASE_URL}/rest/v1/laws`, {
@@ -28,161 +39,83 @@ async function loadLaws(){
         }
     });
 
-    let data = await res.json();
-    lawDatabase = data;
+    if(!res.ok){
+        console.error("Error loading laws");
+        return;
+    }
+
+    lawDatabase = await res.json();
 }
+
+loadTerms();
 loadLaws();
 
+// ====================
+// SEARCH (TERMS)
+// ====================
 document.getElementById("search").addEventListener("input", function(){
-    let query = this.value.toLowerCase();
+    let query = this.value.trim().toLowerCase();
     
-    if(query.length === 0){
+    if(query === ""){
         showHistory();
-        document.getElementById("suggestions").innerHTML = "";
+        clearSuggestions("sugestions");
         return;
     };
     
-    let results = database.filter(item => {
-        let termMatch = item.term.toLowerCase().includes(query);
+    let results = filterTerms(query);
 
-        let translationMatch = item.translations && item.translations.some(t =>
-            t.toLowerCase().includes(query)
-        );
-
-        return termMatch || translationMatch;
-    });
-
-    if(results.length > 0){
-        let term = results[0]?.term;
-        
-        if(term && !searchHistory.includes(term)){
-            searchHistory.unshift(term);
-        }
-        searchHistory = searchHistory.slice(0,3);
-        localStorage.setItem("history", JSON.stringify(searchHistory));
-    };
-
-    let html = "";
-
-    results.forEach(r => {
-
-        html += `<div class="result-card">`;
-        html += `<div class="term">${r.term}</div>`;
-
-        if(r.translations){
-            r.translations.forEach(t=>{
-                html += `<span class="translation">${t}</span>`;
-            });
-        }
-
-        if(r.notes){
-            html += `<div class="notes">${r.notes}</div>`;
-        }
-
-        html += "</div>";
-    });
-    document.getElementById("results").innerHTML = html;
-
-    let suggestionHTML = "";
-    results.slice(0,5).forEach(r=>{
-        suggestionHTML += `<div class="suggestion-item" onclick="selectSuggestion(\`${r.term}\`)">${r.term}</div>`;
-    });
-
-    document.getElementById("suggestions").innerHTML = suggestionHTML;
+    updateHistory(results);
+    renderResults(results);
+    renderSuggestions(results, "suggestions", "selectSuggestion");
 });
 
+// ====================
+// SEARCH (LAWS)
+// ====================
 document.getElementById("lawSearch").addEventListener("input", function(){
-    let query = this.value.toLowerCase();
+    let query = this.value.trim().toLowerCase();
 
     if(query.length < 3){
-        document.getElementById("lawResults").innerHTML = "";
-        document.getElementById("lawSuggestions").innerHTML = "";
+        clearResults("lawResults");
+        clearSuggestions("lawSuggestions")
         return;
     }
 
-    let results = lawDatabase.filter(item =>
-        item.keywords.some(k => k.includes(query))
-    );
-
-    let html = "";
-
-    results.forEach(r => {
-        html += `<div class="result-card">`;
-
-        html += `<div class="term">${r.law}</div>`;
-        html += `<strong>${r.article}</strong>`;
-
-        html += `<p><b>English:</b><br>${r.english}</p>`;
-        html += `<p><b>Indonesian:</b><br>${r.indonesian}</p>`;
-
-        html += `</div>`;
-    });
-    document.getElementById("lawResults").innerHTML = html;
-
-    let suggestionHTML = "";
-
-    results.slice(0,5).forEach(r=>{
-        suggestionHTML += `<div class="suggestion-item" onclick="selectLaw(\`${r.keywords[0]}\`)">${r.law}</div>`
-    });
+    let results = filterLaws(query);
     
-    document.getElementById("lawSuggestions").innerHTML = suggestionHTML;
+    renderLawResults(results);
+    renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
 });
 
-function showHistory(){
-    let html = "";
-    
-    searchHistory.forEach(term => {
-        let item = database.find(d => d.term === term);
-        
-        if(item){
-            html += `<div class="result-card">`;
-            html += `<div class="term">${item.term}</div>`;
+// ====================
+// FILTER LOGIC
+// ====================
+function filterTerms(query){
+    return database.filter(item => {
+        let termMatch = item.term.toLowerCase().includes(query);
 
-            if(item.translations){
-                item.translations.forEach(t=>{
-                    html += `<span class="translation">${t}</span>`;
-                });
-            }
-            html += `</div>`;
-        }
-    });
-    document.getElementById("results").innerHTML = html;
-};
-
-function clearInput(id){
-    let input = document.getElementById(id);
-    input.value = "";
-
-    if(id === "search"){
-        document.getElementById("results").innerHTML = "";
-        document.getElementById("suggestions").innerHTML = "";
-    } else {
-        document.getElementById("lawResults").innerHTML = "";
-        document.getElementById("lawSuggestions").innerHTML = "";
-    }
-
-    input.focus();
-};
-
-function selectSuggestion(term){
-    let input = document.getElementById("search");
-    input.value = term;
-    document.getElementById("suggestions").innerHTML = "";
-
-    renderResults(term);
-};
-
-function renderResults(query){
-    let results = database.filter(item => {
-        let termMatch = item.term.toLowerCase().includes(query.toLowerCase());
-
-        let translationMatch = item.translations && item.translations.some(t =>
-            t.toLowerCase().includes(query.toLowerCase())
-        );
+        let translationMatch = item.translations &&
+            item.translations.some(t =>
+                t.toLowerCase().includes(query)
+            );
 
         return termMatch || translationMatch;
     });
+}
 
+function filterLaws(query){
+    return lawDatabase.filter(item =>
+        item.keywords &&
+        item.keywords.some(k =>
+            k.toLowerCase().includes(query)
+        )
+    );
+}
+
+// ===================
+// RENDER RESULTS
+// ===================
+function renderResults(results){
     let html = "";
 
     results.forEach(r =>{
@@ -205,54 +138,130 @@ function renderResults(query){
     document.getElementById("results").innerHTML = html;
 }
 
-function renderLawResults(query){
-    let results = lawDatabase.filter(item =>
-        item.keywords.some(k =>
-            k.toLowerCase().includes(query.toLowerCase())
-        )
-    );
-
+function renderLawResults(results){
     let html = "";
 
     results.forEach(r => {
         html += `<div class="result-card">`;
         html += `<div class="term">${r.law}</div>`;
         html += `<strong>${r.article}</strong>`;
-
         html += `<p><b>English:</b><br>${r.english}</p>`;
         html += `<p><b>Indonesian:</b><br>${r.indonesian}</p>`;
-
         html += `</div>`;
     });
 
     document.getElementById("lawResults").innerHTML = html;
 }
 
+// ====================
+// SUGGESTIONS
+// ====================
+function renderSuggestions(results, containerId, handler, type="term"){
+    let html = "";
+
+    results.slice(0,5).forEach(r=>{
+        let value = type === "law" ? r.keywords[0] : r.term;
+
+        html += `
+        <div class="suggestion-item"
+            data-value="${value}"
+            onclick="${handler}(this.dataset.value)">
+            ${type === "law" ? r.law : r.term}
+        </div>`;
+    });
+
+    document.getElementById(containerId).innerHTML = html;
+}
+
+function clearSuggestions(id){
+    document.getElementById(id).innerHTML = "";
+}
+
+// ==================
+// SELECT (CLICK)
+// ==================
+function selectSuggestion(term){
+    document.getElementById("search").value = term;
+    clearSuggestions("suggestions");
+
+    let results = filterTerms(term);
+    renderResults(results);
+}
+
 function selectLaw(keyword){
-    let input = document.getElementById("lawSearch");
-    input.value = keyword;
-    document.getElementById("lawSuggestions").innerHTML = "";
+    document.getElementById("lawSearch").value = keyword;
+    clearSuggestions("lawSuggestions");
 
-    renderLawResults(keyword);
-};
+    let results = filterLaws(keyword)
+    renderLawResults(results);
+}
 
+// ==================
+// HISTORY
+// ==================
+function updateHistory(results){
+    if(results.length === 0) return;
+
+    let term = results[0]?.term;
+
+    if(term && !searchHistory.includes(term)){
+        searchHistory.unshift(term);
+    }
+
+    searchHistory = searchHistory.slice(0,3);
+    localStorage.setItem("history", JSON.stringify(searchHistory));
+}
+
+function showHistory(){
+    let html = "";
+    
+    searchHistory.forEach(term => {
+        let item = database.find(d => d.term === term);
+        
+        if(item){
+            html += `<div class="result-card">`;
+            html += `<div class="term">${item.term}</div>`;
+
+            if(item.translations){
+                item.translations.forEach(t=>{
+                    html += `<span class="translation">${t}</span>`;
+                });
+            }
+            html += `</div>`;
+        }
+    });
+    document.getElementById("results").innerHTML = html;
+}
+
+// =================
+// CLEAR INPUT
+// =================
+function clearInput(id){
+    let input = document.getElementById(id);
+    input.value = "";
+
+    if(id === "search"){
+        showHistory();
+        clearSuggestions("suggestions");
+    }else{
+        clearResults("lawResults");
+        clearSuggestions("lawSuggestions");
+    }
+
+    input.focus();
+}
+
+function clearResults(id){
+    document.getElementById(id).innerHTML = "";
+}
+
+// =================
+// VOICE
+// =================
 function speak(text){
     let utterance = new SpeechSynthesisUtterance(text);
 
-    if(/[a-z]/i.test(text)){
-        utterance.lang = "en-US";
-    }else{
-        utterance.lang = "id-ID";
-    }
+    utterance.lang = /[a-z]/i.test(text) ? "en-US" : "id-ID";
     
     speechSynthesis.speak(utterance);
-};
-
-let dotsContainer = document.getElementById("dots");
-
-if(dotsContainer){
-    for(let i=0; i<60; i++){
-        let span = document.createElement("span");
-        dotsContainer.appendChild(span);
-    }
-};
+}
