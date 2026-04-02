@@ -58,11 +58,12 @@ loadLaws();
 // SEARCH (TERMS)
 // ====================
 document.getElementById("search").addEventListener("input", function(){
+    document.getElementById("suggestions").style.display = "block";
     let query = this.value.trim().toLowerCase();
     
     if(query === ""){
         showHistory();
-        clearSuggestions("sugestions");
+        clearSuggestions("suggestions");
         return;
     };
     
@@ -77,6 +78,7 @@ document.getElementById("search").addEventListener("input", function(){
 // SEARCH (LAWS)
 // ====================
 document.getElementById("lawSearch").addEventListener("input", function(){
+    document.getElementById("lawSuggestions").style.display = "block";
     let query = this.value.trim().toLowerCase();
 
     if(query.length < 3){
@@ -190,6 +192,8 @@ function selectSuggestion(term){
     
     clearSuggestions("suggestions");
 
+    document.getElementById("suggestions").style.display = "none";
+
     let results = filterTerms(term);
 
     updateHistory(results);
@@ -201,6 +205,8 @@ function selectLaw(keyword){
     input.value = keyword;
     
     clearSuggestions("lawSuggestions");
+
+    document.getElementById("lawSuggestions").style.display = "none";
 
     let results = filterLaws(keyword);
     
