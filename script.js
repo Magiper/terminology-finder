@@ -1,20 +1,37 @@
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 let database = [];
 
-fetch("terms.json")
-.then(response => response.json())
-.then(data => {
+const SUPABASE_URL = "https://supabase.com/dashboard/project/ktaubwudmmbdbuwfdvem";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0YXVid3VkbW1iZGJ1d2ZkdmVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzAyNDMsImV4cCI6MjA5MDY0NjI0M30.9NiNYBp7aVWrT_cZ7j3qwjN9DMUuku2gLYEXqlsjAtQ";
+
+async function loadTerms(){
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/terms`, {
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+    });
+
+    let data = await res.json();
     database = data;
     showHistory();
-});
+}
+loadTerms();
 
 let lawDatabase = [];
 
-fetch("laws.json")
-.then(response => response.json())
-.then(data => {
-lawDatabase = data;
-});
+async function loadLaws(){
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/laws`, {
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+    });
+
+    let data = await res.json();
+    lawDatabase = data;
+}
+loadLaws();
 
 document.getElementById("search").addEventListener("input", function(){
     let query = this.value.toLowerCase();
