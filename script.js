@@ -185,18 +185,25 @@ function clearSuggestions(id){
 // SELECT (CLICK)
 // ==================
 function selectSuggestion(term){
-    document.getElementById("search").value = term;
+    let input = document.getElementById("search");
+    input.value = term;
+    
     clearSuggestions("suggestions");
 
     let results = filterTerms(term);
+
+    updateHistory(results);
     renderResults(results);
 }
 
 function selectLaw(keyword){
-    document.getElementById("lawSearch").value = keyword;
+    let input = document.getElementById("lawSearch");
+    input.value = keyword;
+    
     clearSuggestions("lawSuggestions");
 
-    let results = filterLaws(keyword)
+    let results = filterLaws(keyword);
+    
     renderLawResults(results);
 }
 
