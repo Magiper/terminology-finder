@@ -1,7 +1,7 @@
 // =====================
 // CONFIG
 // ===================== 
-const SUPABASE_URL = "https://ktaubwudmmbdbuwfdvem.supabase.co";
+const SUPABASE_URL = "https://supabase.com/dashboard/project/ktaubwudmmbdbuwfdvem";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0YXVid3VkbW1iZGJ1d2ZkdmVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzAyNDMsImV4cCI6MjA5MDY0NjI0M30.9NiNYBp7aVWrT_cZ7j3qwjN9DMUuku2gLYEXqlsjAtQ";
 
 // =====================
@@ -15,12 +15,10 @@ let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 // LOAD DATA
 // =====================
 async function loadTerms(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/term-db`, {
-        method: "GET",
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/terms`, {
         headers: {
             "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
+            "Authorization": `Bearer ${SUPABASE_KEY}`
         }
     });
 
@@ -34,17 +32,15 @@ async function loadTerms(){
 }
 
 async function loadLaws(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/law-db`, {
-        method: "GET",
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/laws`, {
         headers: {
             "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
+            "Authorization": `Bearer ${SUPABASE_KEY}`
         }
     });
 
     if(!res.ok){
-        console.error("Error loading laws:", await res.text());
+        console.error("Error loading laws");
         return;
     }
 
@@ -59,36 +55,24 @@ loadLaws();
 // ====================
 document.getElementById("search").addEventListener("input", function(){
     let query = this.value.trim().toLowerCase();
-    document.getElementById("suggestions").style.display = "block";
-
+    
     if(query === ""){
         showHistory();
-        clearSuggestions("suggestions");
+        clearSuggestions("sugestions");
         return;
-    }
+    };
     
     let results = filterTerms(query);
 
     updateHistory(results);
+    renderResults(results);
     renderSuggestions(results, "suggestions", "selectSuggestion");
-});
-
-document.getElementById("search").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-
-        let results = filterTerms(query);
-
-        clearSuggestions("suggestions");
-        renderResults(results);
-    }
 });
 
 // ====================
 // SEARCH (LAWS)
 // ====================
 document.getElementById("lawSearch").addEventListener("input", function(){
-    document.getElementById("lawSuggestions").style.display = "block";
     let query = this.value.trim().toLowerCase();
 
     if(query.length < 3){
@@ -99,6 +83,7 @@ document.getElementById("lawSearch").addEventListener("input", function(){
 
     let results = filterLaws(query);
     
+    renderLawResults(results);
     renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
 });
 
@@ -106,8 +91,6 @@ document.getElementById("lawSearch").addEventListener("input", function(){
 // FILTER LOGIC
 // ====================
 function filterTerms(query){
-    query = query.toLowerCase();
-    
     return database.filter(item => {
         let termMatch = item.term.toLowerCase().includes(query);
 
@@ -198,30 +181,18 @@ function clearSuggestions(id){
 // SELECT (CLICK)
 // ==================
 function selectSuggestion(term){
-    let input = document.getElementById("search");
-    let query = term.toLowerCase();
-    
-    input.value = term;
-    
+    document.getElementById("search").value = term;
     clearSuggestions("suggestions");
-    document.getElementById("suggestions").style.display = "none";
 
     let results = filterTerms(term);
-
-    updateHistory(results);
     renderResults(results);
 }
 
 function selectLaw(keyword){
-    let input = document.getElementById("lawSearch");
-    input.value = keyword;
-    
+    document.getElementById("lawSearch").value = keyword;
     clearSuggestions("lawSuggestions");
 
-    document.getElementById("lawSuggestions").style.display = "none";
-
-    let results = filterLaws(keyword);
-    
+    let results = filterLaws(keyword)
     renderLawResults(results);
 }
 
@@ -259,7 +230,7 @@ function showHistory(){
             html += `</div>`;
         }
     });
-    document.getElementById("results").innerHTML = html;
+    document.getElementById("historyResults").innerHTML = html;
 }
 
 // =================
@@ -293,4 +264,36 @@ function speak(text){
     utterance.lang = /[a-z]/i.test(text) ? "en-US" : "id-ID";
     
     speechSynthesis.speak(utterance);
+}
+
+// =================
+// TAB
+// =================
+function switchTab(event, tab){
+    // remove active menu
+    document.querySelectorAll(".menu-item").forEach(el=>{
+        el.classList.remove("active");
+    });
+
+    // activate clicked
+    event.target.classList.add("active");
+
+    // hide all tabs
+    document.querySelectorAll(".tab").forEach(el=>{
+        el.classList.remove("active");
+    });
+
+    // show selected tab
+    if(tab === "term"){
+        document.getElementById("termTab").classList.add("active");
+    }
+
+    if(tab === "law"){
+        document.getElementById("lawTab").classList.add("active");
+    }
+
+    if(tab === "history"){
+        document.getElementById("historyTab").classList.add("active");
+        showHistory();
+    }
 }
