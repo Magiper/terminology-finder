@@ -163,6 +163,41 @@ body{
   font-size: 12px;
 }
 
+.menu{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.menu-item{
+  flex: 1;
+  background: #2b4a5c;
+  padding: 12px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.menu-item:hover{
+  background: #3b5f75;
+}
+
+.menu-item:active{
+  background: #4a90e2;
+}
+
+/* Tabs */
+.tab{
+  display: none;
+}
+
+.tab.active{
+  display: block;
+}
+
 </style>
 
 </head>
@@ -186,22 +221,37 @@ body{
 <!-- SEARCH PANEL -->
 <div class="search-panel">
 
-  <div class="input-wrapper">
-    <span class="icon">🔍</span>
-    <input id="search" placeholder="Cari terminologi...">
-    <span class="clear" onclick="clearInput('search')">❌</span>
-    <div class="suggestions" id="suggestions"></div>
+  <!-- MENU -->
+  <div class="menu">
+    <div class="menu-item active" onclick="switchTab('term')">🔍 Terminology</div>
+    <div class="menu-item" onclick="switchTab('law')">⚖ Law</div>
+    <div class="menu-item" onclick="switchTab('history')">📑 History</div>
   </div>
 
-  <div class="input-wrapper">
-    <span class="icon">🔍</span>
-    <input id="lawSearch" placeholder="Cari hukum internasional...">
-    <span class="clear" onclick="clearInput('lawSearch')">❌</span>
-    <div class="suggestions" id="lawSuggestions"></div>
+  <!-- CONTENT -->
+  <div id="termTab" class="tab active">
+    <div class="input-wrapper">
+      <span class="icon">🔍</span>
+      <input id="search" placeholder="Cari terminologi...">
+      <span class="clear" onclick="clearInput('search')">❌</span>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+    <div id="results"></div>
   </div>
 
-  <div id="results"></div>
-  <div id="lawResults"></div>
+  <div id="lawTab" class="tab">
+    <div class="input-wrapper">
+      <span class="icon">🔍</span>
+      <input id="lawSearch" placeholder="Cari hukum internasional...">
+      <span class="clear" onclick="clearInput('lawSearch')">❌</span>
+      <div class="suggestions" id="lawSuggestions"></div>
+    </div>
+    <div id="lawResults"></div>
+  </div>
+
+  <div id="historyTab" class="tab">
+    <div id="historyResults"></div>
+  </div>
 
   <div class="footer">© Translator Team</div>
 
