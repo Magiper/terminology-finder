@@ -148,55 +148,59 @@ function renderResults(results){
 
         // PRIMARY
         if(t?.primary){
-            html += `<div><b>✅ Primary</b></div>`;
             html += `
-                <div class="translation">
-                    ${t.primary.term}
+            <div class="section primary">
+                <div class="section-title">Primary</div>
+                <div class="item">
+                    🟢 ${t.primary.term}
                     <small>(${t.primary.context})</small>
                     <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
                 </div>
-            `;
+            </div>`;
         }
 
         // ALTERNATIVES
         if(t?.alternatives?.length){
-            html += `<div><b>✅ Alternatives</b></div>`;
+            html += `<div class="section alt"><div class="section-title">Alternatives</div>`;
             t.alternatives.forEach(a=>{
                 html += `
-                    <div class="translation">
-                        ${a.term}
-                        <small>(${a.context})</small>
-                        <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
-                    </div>
-                `;
+                <div class="item">
+                    🟡 ${a.term}
+                    <small>(${a.context})</small>
+                    <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
+                </div>`;
             });
+            html += `</div>`
         }
 
         // FORBIDDEN
         if(t?.forbidden?.length){
-            html += `<div><b>❌ Hindari</b></div>`;
+            html += `<div class="section bad"><div class="section-title">Hindari</div>`;
             t.forbidden.forEach(f=>{
                 html += `
-                    <div class="translation" style="background: #aa4444;">
-                        ${f.term}
-                        <small>(${f.context})</small>
-                    </div>;
-                `;
+                <div class="item bad">
+                    🔴 ${f.term}
+                    <small>(${f.context})</small>
+                </div>`;
             });
+            html += `</div>`
         }
 
         // NOTES
         if(r.notes?.length){
-            html += `<div class="notes"><b>📝 Notes</b></div>`;
+            html += `<div class="notes-block"><b>Notes</b>`;
             r.notes.forEach(n=>{
-                html += `<div class="notes">• ${n}</div>`;
+                html += `<div>• ${n}</div>`;
             });
+            html += `</div>`;
         }
 
         // RELATED TERMS
         if(r.related_terms?.length){
-            html += `<div class="notes"><b>🔗 Terkait</b></div>`;
-            html += `<div class="notes">${r.related_terms.join(", ")}</div>`;
+            html += `
+            <div class="related">
+                🔗 ${r.related_terms.join(" • ")}
+            </div>`;
         }
         
         html += `</div>`;
@@ -227,13 +231,13 @@ function renderSuggestions(results, containerId, handler, type="term"){
     let html = "";
 
     results.slice(0,5).forEach(r=>{
-        let value = type === "law" ? r.keywords[0] : r.term;
+        let value = type === "law" ? r.keywords[0] : r.indonesian;
 
         html += `
         <div class="suggestion-item"
             data-value="${value}"
             onclick="${handler}(this.dataset.value)">
-            ${type === "law" ? r.law : r.term}
+            ${type === "law" ? r.law : r.indonesian}
         </div>`;
     });
 
@@ -281,7 +285,7 @@ function selectLaw(keyword){
 function updateHistory(results){
     if(results.length === 0) return;
 
-    let term = results[0]?.term;
+    let term = results[0]?.indonesian;
 
     if(term && !searchHistory.includes(term)){
         searchHistory.unshift(term);
