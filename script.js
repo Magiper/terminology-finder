@@ -110,7 +110,9 @@ function filterTerms(query){
     
     return database.filter(item => {
         
-        let termMatch = item.indonesian.toLowerCase().includes(query);
+        let idMatch = item.term_id?.toLowerCase().includes(query);
+
+        let indoMatch = item.indonesian.toLowerCase().includes(query);
 
         let primaryMatch = item.translations?.primary?.term
             ?.toLowerCase().includes(query);
@@ -119,7 +121,7 @@ function filterTerms(query){
             a.term.toLowerCase().includes(query)
         );
 
-        return termMatch || primaryMatch || altMatch;
+        return idMatch || indoMatch || primaryMatch || altMatch;
     });
 }
 
@@ -231,13 +233,14 @@ function renderSuggestions(results, containerId, handler, type="term"){
     let html = "";
 
     results.slice(0,5).forEach(r=>{
-        let value = type === "law" ? r.keywords[0] : r.indonesian;
+        let value = type === "law" ? r.keywords[0] : r.term_id;
 
         html += `
         <div class="suggestion-item"
             data-value="${value}"
             onclick="${handler}(this.dataset.value)">
-            ${type === "law" ? r.law : r.indonesian}
+            <b>${r.term_id}</b><br>
+            <small>${r.indonesian}</small>
         </div>`;
     });
 
