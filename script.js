@@ -109,14 +109,17 @@ function filterTerms(query){
     query = query.toLowerCase();
     
     return database.filter(item => {
-        let termMatch = item.term.toLowerCase().includes(query);
+        let termMatch = item.term_id?.toLowerCase().includes(query)
+            || item.indonesian?.toLowerCase().includes(query);
 
-        let translationMatch = item.translations &&
-            item.translations.some(t =>
-                t.toLowerCase().includes(query)
-            );
+        let primaryMatch = item.translations?.primary?.term
+            ?.toLowerCase().includes(query);
 
-        return termMatch || translationMatch;
+        let altMatch = item.translations?.alternatives?.some(t =>
+            t.term.toLowerCase().includes(query)
+        );
+
+        return termMatch || primaryMatch || altMatch;
     });
 }
 
