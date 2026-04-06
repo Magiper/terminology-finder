@@ -137,18 +137,66 @@ function renderResults(results){
 
     results.forEach(r =>{
         html += `<div class="result-card">`;
-        html += `<div class="term">${r.term}</div>`;
 
-        if(r.translations){
-            r.translations.forEach(t=>{
-                html += `<span class="translation">${t}<button onclick="speak('${t}')" class="speak-btn">🔊</button></span>`;
+        // TERM
+        html += `<div class="term">${r.term_id || r.term}</div>`;
+        html += `<div><b>Indonesian:</b> ${r.indonesian || "-"}</div>`;
+
+        // PRIMARY
+        if(r.translations?.primary){
+            html += `<div class="section-title">Primary</div>`;
+            html += `
+                <span class="translation">
+                    ${r.translations.primary.term}
+                    <button onclick="speak('${r.translations.primary.term}')" class="speak-btn">🔊</button>
+                </span>
+                <div class="context">${r.translations.primary.context}</div>
+            `;
+        }
+
+        // ALTERNATIVES
+        if(r.translations?.alternatives?.length){
+            html += `<div class="section-title">Alternatives</div>`;
+            r.translations.alternatives.forEach(t=>{
+                html += `
+                    <span class="translation alt">
+                        ${t.term}
+                        <button onclick="speak('${t.term}')" class="speak-btn">🔊</button>
+                    </span>
+                    <div class="context">${t.context}</div>
+                `;
             });
         }
 
-        if(r.notes){
-            html += `<div class="notes">${r.notes}</div>`;
+        // FORBIDDEN
+        if(r.translations?.forbidden?.length){
+            html += `<div class="section-title avoid">Avoid</div>`;
+            r.translations.forbidden.forEach(t=>{
+                html += `
+                    <span class="translation bad">${t.term}</span>
+                    <div class="context">${t.context}</div>
+                `;
+            });
         }
 
+        // NOTES
+        if(r.notes?.length){
+            html += `<div class="notes">`;
+            r.notes.forEach(n=>{
+                html += `• ${n}<br`;
+            });
+            html += `</div>`;
+        }
+
+        // RELATED TERMS
+        if(r.related_terms?.length){
+            html += `<div class="related">`;
+            r.related_terms.forEach(rt=>{
+                html += `<span class="tag">${rt}</span>`;
+            });
+            html += `</div>`;
+        }
+        
         html += `</div>`;
     });
 
