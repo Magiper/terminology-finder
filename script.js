@@ -109,14 +109,14 @@ function filterTerms(query){
     query = query.toLowerCase();
     
     return database.filter(item => {
-        let termMatch = item.term_id?.toLowerCase().includes(query)
-            || item.indonesian?.toLowerCase().includes(query);
+        
+        let termMatch = item.indonesian.toLowerCase().includes(query);
 
         let primaryMatch = item.translations?.primary?.term
             ?.toLowerCase().includes(query);
 
-        let altMatch = item.translations?.alternatives?.some(t =>
-            t.term.toLowerCase().includes(query)
+        let altMatch = item.translations?.alternatives?.some(a =>
+            a.term.toLowerCase().includes(query)
         );
 
         return termMatch || primaryMatch || altMatch;
@@ -141,63 +141,62 @@ function renderResults(results){
     results.forEach(r =>{
         html += `<div class="result-card">`;
 
-        // TERM
-        html += `<div class="term">${r.term_id || r.term}</div>`;
-        html += `<div><b>Indonesian:</b> ${r.indonesian || "-"}</div>`;
+        // TITLE
+        html += `<div class="term">${r.indonesian}</div>`;
+
+        let t = r.translations;
 
         // PRIMARY
-        if(r.translations?.primary){
-            html += `<div class="section-title">Primary</div>`;
+        if(t?.primary){
+            html += `<div><b>✅ Primary</b></div>`;
             html += `
-                <span class="translation">
-                    ${r.translations.primary.term}
-                    <button onclick="speak('${r.translations.primary.term}')" class="speak-btn">🔊</button>
-                </span>
-                <div class="context">${r.translations.primary.context}</div>
+                <div class="translation">
+                    ${t.primary.term}
+                    <small>(${t.primary.context})</small>
+                    <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
+                </div>
             `;
         }
 
         // ALTERNATIVES
-        if(r.translations?.alternatives?.length){
-            html += `<div class="section-title">Alternatives</div>`;
-            r.translations.alternatives.forEach(t=>{
+        if(t?.alternatives?.length){
+            html += `<div><b>✅ Alternatives</b></div>`;
+            t.alternatives.forEach(a=>{
                 html += `
-                    <span class="translation alt">
-                        ${t.term}
-                        <button onclick="speak('${t.term}')" class="speak-btn">🔊</button>
-                    </span>
-                    <div class="context">${t.context}</div>
+                    <div class="translation">
+                        ${a.term}
+                        <small>(${a.context})</small>
+                        <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
+                    </div>
                 `;
             });
         }
 
         // FORBIDDEN
-        if(r.translations?.forbidden?.length){
-            html += `<div class="section-title avoid">Avoid</div>`;
-            r.translations.forbidden.forEach(t=>{
+        if(t?.forbidden?.length){
+            html += `<div><b>❌ Hindari</b></div>`;
+            t.forbidden.forEach(f=>{
                 html += `
-                    <span class="translation bad">${t.term}</span>
-                    <div class="context">${t.context}</div>
+                    <div class="translation" style="background: #aa4444;">
+                        ${f.term}
+                        <small>(${f.context})</small>
+                    </div>;
                 `;
             });
         }
 
         // NOTES
         if(r.notes?.length){
-            html += `<div class="notes">`;
+            html += `<div class="notes"><b>📝 Notes</b></div>`;
             r.notes.forEach(n=>{
-                html += `• ${n}<br`;
+                html += `<div class="notes">• ${n}</div>`;
             });
-            html += `</div>`;
         }
 
         // RELATED TERMS
         if(r.related_terms?.length){
-            html += `<div class="related">`;
-            r.related_terms.forEach(rt=>{
-                html += `<span class="tag">${rt}</span>`;
-            });
-            html += `</div>`;
+            html += `<div class="notes"><b>🔗 Terkait</b></div>`;
+            html += `<div class="notes">${r.related_terms.join(", ")}</div>`;
         }
         
         html += `</div>`;
