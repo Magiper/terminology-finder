@@ -80,7 +80,7 @@ document.getElementById("search").addEventListener("keydown", function(e){
         let results = filterTerms(query);
 
         clearSuggestions("suggestions");
-        renderResults(results);
+        renderResults(results, query);
     }
 });
 
@@ -135,16 +135,26 @@ function filterLaws(query){
 }
 
 // ===================
+// HIGHLIGHT
+// ===================
+function highlight(text, query){
+    if(!query) return text;
+
+    let regex = new RegExp(`(${query})`, "gi");
+    return text.replace(regex, `<span class="highlight">$1</span>`);
+}
+
+// ===================
 // RENDER RESULTS
 // ===================
-function renderResults(results){
+function renderResults(results, query=""){
     let html = "";
 
     results.forEach(r =>{
         html += `<div class="result-card">`;
 
         // TITLE
-        html += `<div class="term">${r.indonesian}</div>`;
+        html += `<div class="term">${highlight(r.indonesian, query)}</div>`;
 
         let t = r.translations;
 
@@ -154,7 +164,7 @@ function renderResults(results){
             <div class="section primary">
                 <div class="section-title">Primary</div>
                 <div class="item">
-                    🟢 ${t.primary.term}
+                    🟢 ${highlight(t.primary.term, query)}
                     <small>(${t.primary.context})</small>
                     <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
                 </div>
@@ -167,7 +177,7 @@ function renderResults(results){
             t.alternatives.forEach(a=>{
                 html += `
                 <div class="item">
-                    🟡 ${a.term}
+                    🟡 ${highlight(a.term, query)}
                     <small>(${a.context})</small>
                     <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
                 </div>`;
@@ -181,7 +191,7 @@ function renderResults(results){
             t.forbidden.forEach(f=>{
                 html += `
                 <div class="item bad">
-                    🔴 ${f.term}
+                    🔴 ${highlight(f.term, query)}
                     <small>(${f.context})</small>
                 </div>`;
             });
@@ -199,12 +209,16 @@ function renderResults(results){
 
         // RELATED TERMS
         if(r.related_terms?.length){
-            html += `
-            <div class="related">
-                🔗 ${r.related_terms.join(" • ")}
-            </div>`;
+            html += `<div class="related">🔗 `;
+            r.related_terms.forEach(term=>{
+                html += `
+                    <span class>="related-item"
+                        onclick="searchRelated('${term}')">
+                        ${term}
+                    </span>
+                `;
+            });
         }
-        
         html += `</div>`;
     });
 
@@ -266,7 +280,7 @@ function selectSuggestion(term){
     let results = filterTerms(term);
 
     updateHistory(results);
-    renderResults(results);
+    renderResults(results, query);
 }
 
 function selectLaw(keyword){
@@ -386,4 +400,16 @@ function switchTab(event, tab){
     if(tab === "reading"){
         document.getElementById("readingTab").classList.add("active");
     }
+}
+
+function searchRelated(term){
+    let input = document.getElementById("search");
+
+    input.value = term;
+
+    let query = term.toLowerCase();
+    let results = filterTerms(query);
+
+    clearSuggestions("suggestions");
+    renderResults(results, query);
 }
