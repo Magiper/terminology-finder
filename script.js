@@ -382,4 +382,8 @@ function switchTab(event, tab){
         document.getElementById("historyTab").classList.add("active");
         showHistory();
     }
+
+    if(tab === "reading"){
+        document.getElementById("readingTab").classList.add("active");
+    }
 }
