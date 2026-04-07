@@ -210,16 +210,18 @@ function renderResults(results, query=""){
         // RELATED TERMS
         if(r.related_terms?.length){
             html += `<div class="related">🔗 `;
+
             r.related_terms.forEach(term=>{
                 html += `
-                    <span class>="related-item"
+                    <span class="related-item"
                         onclick="searchRelated('${term}')">
                         ${term}
                     </span>
                 `;
             });
+
+            html += `</div>`;
         }
-        html += `</div>`;
     });
 
     document.getElementById("results").innerHTML = html;
