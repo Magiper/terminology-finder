@@ -8,7 +8,6 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // STATE
 // =====================
 let database = [];
-let lawDatabase = [];
 let uuDatabase = [];
 let caseDatabase = [];
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
@@ -33,24 +32,6 @@ async function loadTerms(){
 
     database = await res.json();
     showHistory();
-}
-
-async function loadLaws(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/law-db`, {
-        method: "GET",
-        headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
-        }
-    });
-
-    if(!res.ok){
-        console.error("Error loading laws:", await res.text());
-        return;
-    }
-
-    lawDatabase = await res.json();
 }
 
 async function loadUU(){
@@ -90,7 +71,6 @@ async function loadCases(){
 }
 
 loadTerms();
-loadLaws();
 loadUU();
 loadCases();
 
@@ -180,15 +160,6 @@ function filterTerms(query){
 
         return idMatch || indoMatch || primaryMatch || altMatch;
     });
-}
-
-function filterLaws(query){
-    return lawDatabase.filter(item =>
-        item.keywords &&
-        item.keywords.some(k =>
-            k.toLowerCase().includes(query)
-        )
-    );
 }
 
 function filterUU(query){
@@ -297,21 +268,6 @@ function renderResults(results, query=""){
     document.getElementById("results").innerHTML = html;
 }
 
-function renderLawResults(results){
-    let html = "";
-
-    results.forEach(r => {
-        html += `<div class="result-card">`;
-        html += `<div class="term">${r.law}</div>`;
-        html += `<strong>${r.article}</strong>`;
-        html += `<p><b>English:</b><br>${r.english}</p>`;
-        html += `<p><b>Indonesian:</b><br>${r.indonesian}</p>`;
-        html += `</div>`;
-    });
-
-    document.getElementById("lawResults").innerHTML = html;
-}
-
 function renderUU(results){
     let html = "";
 
@@ -381,7 +337,7 @@ function renderSuggestions(results, containerId, handler, type="term"){
     let html = "";
 
     results.slice(0,5).forEach(r=>{
-        let value = type === "law" ? r.keywords[0] : r.term_id;
+        let value = type === "law" ? r.kata_kunci : r.term_id;
 
         html += `
         <div class="suggestion-item"
@@ -425,9 +381,8 @@ function selectLaw(keyword){
 
     document.getElementById("lawSuggestions").style.display = "none";
 
-    let results = filterLaws(keyword)
-
-    renderLawResults(results);
+    let results = filterUU(keyword);
+    renderUU(results);
 }
 
 // ==================
