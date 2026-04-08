@@ -9,6 +9,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // =====================
 let database = [];
 let lawDatabase = [];
+let uuDatabase = [];
+let caseDatabase = [];
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 
 // =====================
@@ -51,8 +53,46 @@ async function loadLaws(){
     lawDatabase = await res.json();
 }
 
+async function loadUU(){
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/uu_internasional`, {
+        method: "GET",
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if(!res.ok){
+        console.error("Error loading UU");
+        return;
+    }
+
+    uuDatabase = await res.json();
+}
+
+async function loadCases(){
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/case_db`, {
+        method: "GET",
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if(!res.ok){
+        console.error("Error loading cases");
+        return;
+    }
+
+    uuDatabase = await res.json();
+}
+
 loadTerms();
 loadLaws();
+loadUU();
+loadCases();
 
 // ====================
 // SEARCH (TERMS)
@@ -97,9 +137,26 @@ document.getElementById("lawSearch").addEventListener("input", function(){
         return;
     }
 
-    let results = filterLaws(query);
-    
+    let results = filterUU(query);
+
+    renderUU(results);
     renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
+});
+
+// ====================
+// SEARCH (CASES)
+// ====================
+document.getElementById("caseSearch").addEventListener("input", function(){
+    let query = this.value.trim().toLowerCase();
+
+    if(query === ""){
+        document.getElementById("historyResults").innerHTML = "";
+        return;
+    }
+
+    let results = filterCases(query);
+
+    renderCases(results);
 });
 
 // ====================
@@ -131,6 +188,19 @@ function filterLaws(query){
         item.keywords.some(k =>
             k.toLowerCase().includes(query)
         )
+    );
+}
+
+function filterUU(query){
+    return uuDatabase.filter(item =>
+        item.kata_kunci.toLowerCase().includes(query)
+    );
+}
+
+function filterCases(query){
+    return caseDatabase.filter(item =>
+        item.judul.toLowerCase().includes(query) ||
+        item.kategori.toLowerCase().includes(query)
     );
 }
 
@@ -240,6 +310,68 @@ function renderLawResults(results){
     });
 
     document.getElementById("lawResults").innerHTML = html;
+}
+
+function renderUU(results){
+    let html = "";
+
+    results.forEach(r => {
+        r.uu_internasional.forEach(u => {
+            html += `<div class="result-card">`;
+            html += `<div class="term">${r.kata_kunci}</div>`;
+            html += `<b>${u.nama_konvensi}</b>`;
+            
+            u.articles.forEach(a=>{
+                html += `
+                <div class="item">
+                    <b>${a.article}</b><br>
+                    ${a.isi}<br>
+                    <small>${a.terjemahan}</small>
+                </div>`;
+            });
+
+            html += `
+            <div class="notes-block">
+                <b>Kesimpulan:</b><br>
+                ${u.kesimpulan}<br>
+                <small>${u.terjemahan_kesimpulan}</small>
+            </div>`;
+
+            html += `
+            <div class="notes-block">
+                <b>Relevansi:</b><br>
+                ${u.relevansi}
+            </div>`;
+
+            html += `</div>`;
+        });
+    });
+
+    document.getElementById("lawResults").innerHTML = html;
+}
+
+function renderCases(results){
+    let html = "";
+
+    results.forEach(c => {
+        html += `<div class="result-card">`;
+        html += `<div class="term">${c.judul}</div>`;
+        html += `<small>${c.kategori}</small>`;
+        html += `<div class="notes-block"><b>UU Digunakan:</b><br>`;
+
+        c.uu_yang_digunakan.forEach(u=>{
+            html += `• ${u}<br>`;
+        });
+        html += `</div>`;
+
+        html += `<div class="notes-block"><b>Kesimpulan:</b><br>${c.kesimpulan}</div>`;
+        html += `<div class="notes-block"><b>Hasil:</b><br>${c.hasil}</div>`;
+        html += `<div class="notes-block"><b>Alasan Legal:</b><br>${c.alasan_legal}</div>`;
+
+        html += `</div>`;
+    });
+
+    document.getElementById("historyResults").innerHTML = html;
 }
 
 // ====================
