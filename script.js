@@ -11,6 +11,8 @@ let database = [];
 let uuDatabase = [];
 let caseDatabase = [];
 let readingDatabase = [];
+let currentPage = 1;
+const itemsPerPage = 5;
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 
 // =====================
@@ -379,11 +381,16 @@ function renderCases(results){
 function renderReading(){
     let html = "";
 
-    readingDatabase.forEach(r => {
+    let start = (currentPage - 1) * itemsPerPage;
+    let end = start + itemsPerPage;
+
+    let paginatedData = readingDatabase.slice(start, end);
+
+    paginatedData.forEach(r => {
         html += `<div class="result-card">`;
 
         html += `<div class="term">${r.judul}</div>`;
-        html += `<small><b>Kata Kunci:</b> ${r.kata_kunci}</small><br><br>`;
+        html += `<small><b>Kata Kunci:</b> ${r.kata_kunci}</small><br>`;
 
         html += `
         <div class="item">
@@ -402,6 +409,39 @@ function renderReading(){
     });
 
     document.getElementById("readingResults").innerHTML = html;
+}
+
+function renderPagination(){
+    let totalPages = Math.ceil(readingDatabase.length / itemsPerPage);
+
+    let html = `<div style="text-align:center; margin-top:10px;">`
+    
+    if(currentPage > 1){
+        html += `<button onclick="prevPage()">⬅ Prev</button>`;
+    }
+
+    html += ` <span style="margin:0 10px;">Page ${currentPage} / ${totalPages}</span> `;
+
+    if(currentPage < totalPages){
+        html += `<button onclick="nextPage()">Next ➡</button>`;
+    }
+
+    html += `</div>`;
+
+    return html;
+}
+
+// ====================
+// CONTROLS
+// ====================
+function nextPage(){
+    currentPage++;
+    renderReading();
+}
+
+function prevPage(){
+    currentPage--;
+    renderReading();
 }
 
 // ====================
@@ -587,6 +627,7 @@ function switchTab(event, tab){
 
     if(tab === "reading"){
         document.getElementById("readingTab").classList.add("active");
+        currentPage = 1;
         renderReading();
     }
 }
