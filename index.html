@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Law Terminology Finder</title>
+<title>Terminology Finder</title>
 <link rel="icon" type="image/png" href="favicon.png">
 
 <style>
@@ -321,8 +321,9 @@ body{
     <div class="input-wrapper">
       <span class="icon">🔍</span>
       <input id="caseSearch" placeholder="Cari Kasus...">
+      <span class="clear" onclick="clearInput('caseSearch')">❌</span>
+      <div class="suggestions" id="caseSuggestions"></div>
     </div>
-    
     <div id="historyResults"></div>
   </div>
 
