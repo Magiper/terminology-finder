@@ -163,16 +163,23 @@ function filterTerms(query){
 }
 
 function filterUU(query){
-    return uuDatabase.filter(item =>
-        item.kata_kunci.toLowerCase().includes(query)
-    );
+    query = query.toLowerCase();
+
+    return uuDatabase.filter(item => {
+        let kataKunciMatch = item.kata_kunci.toLowerCase().includes(query);
+
+        return kataKunciMatch;
+    });
 }
 
 function filterCases(query){
-    return caseDatabase.filter(item =>
-        item.judul.toLowerCase().includes(query) ||
-        item.kategori.toLowerCase().includes(query)
-    );
+    query = query.toLowerCase();
+
+    return caseDatabase.filter(item => {
+        let judulMatch = item.judul.toLowerCase().includes(query) || item.kategori.toLowerCase().includes(query);
+
+        return judulMatch;
+    });
 }
 
 // ===================
