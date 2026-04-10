@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Terminology Finder</title>
+<title>Law Terminology Finder</title>
 <link rel="icon" type="image/png" href="favicon.png">
 
 <style>
@@ -291,8 +291,8 @@ body{
   <!-- MENU -->
   <div class="menu">
     <div class="menu-item active" onclick="switchTab(event, 'term')">🔍 Terminologi</div>
-    <div class="menu-item" onclick="switchTab(event, 'law')">⚖ UU Internasional</div>
-    <div class="menu-item" onclick="switchTab(event, 'history')">📁 Riwayat Kasus</div>
+    <div class="menu-item" onclick="switchTab(event, 'law')">🗿 UU Internasional</div>
+    <div class="menu-item" onclick="switchTab(event, 'case')">📼 Riwayat Kasus</div>
     <div class="menu-item" onclick="switchTab(event, 'reading')">📖 Daftar Bacaan</div>
   </div>
 
@@ -317,14 +317,14 @@ body{
     <div id="lawResults"></div>
   </div>
 
-  <div id="historyTab" class="tab">
+  <div id="caseTab" class="tab">
     <div class="input-wrapper">
       <span class="icon">🔍</span>
       <input id="caseSearch" placeholder="Cari Kasus...">
       <span class="clear" onclick="clearInput('caseSearch')">❌</span>
       <div class="suggestions" id="caseSuggestions"></div>
     </div>
-    <div id="historyResults"></div>
+    <div id="caseResults"></div>
   </div>
 
   <div id="readingTab" class="tab">
