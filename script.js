@@ -96,7 +96,6 @@ document.getElementById("search").addEventListener("input", function(){
 document.getElementById("search").addEventListener("keydown", function(e){
     if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
-
         let results = filterTerms(query);
 
         clearSuggestions("suggestions");
@@ -108,8 +107,8 @@ document.getElementById("search").addEventListener("keydown", function(e){
 // SEARCH (LAWS)
 // ====================
 document.getElementById("lawSearch").addEventListener("input", function(){
-    document.getElementById("lawSuggestions").style.display = "block";
     let query = this.value.trim().toLowerCase();
+    document.getElementById("lawSuggestions").style.display = "block";
 
     if(query.length < 3){
         clearResults("lawResults");
@@ -119,8 +118,17 @@ document.getElementById("lawSearch").addEventListener("input", function(){
 
     let results = filterUU(query);
 
-    renderUU(results);
     renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
+});
+
+document.getElementById("lawSearch").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        let query = this.value.trim().toLowerCase();
+        let results = filterUU(query);
+
+        clearSuggestions("lawSuggestions");
+        renderUU(results);
+    }
 });
 
 // ====================
@@ -130,13 +138,24 @@ document.getElementById("caseSearch").addEventListener("input", function(){
     let query = this.value.trim().toLowerCase();
 
     if(query === ""){
-        document.getElementById("historyResults").innerHTML = "";
+        clearSuggestions("caseSuggestions");
+        clearResults("historyResults");
         return;
     }
 
     let results = filterCases(query);
 
-    renderCases(results);
+    renderSuggestions(results, "caseSuggestions", "selectCase", "case");
+});
+
+document.getElementById("caseSearch").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        let query = this.value.trim().toLowerCase();
+        let results = filterCases(query);
+
+        clearSuggestions("caseSuggestions");
+        renderCases(results);
+    }
 });
 
 // ====================
@@ -344,14 +363,30 @@ function renderSuggestions(results, containerId, handler, type="term"){
     let html = "";
 
     results.slice(0,5).forEach(r=>{
-        let value = type === "law" ? r.kata_kunci : r.term_id;
+        let value, title, subtitle;
+
+        if(type === "law"){
+            value = r.kata_kunci;
+            title = r.kata_kunci;
+            subtitle = "UU Internasional";
+        }
+        else if(type === "case"){
+            value = r.judul;
+            title = r.judul;
+            subtitle = r.kategori;
+        }
+        else {
+            value = r.term_id;
+            title = r.term_id;
+            subtitle = r.indonesian;
+        }
 
         html += `
         <div class="suggestion-item"
             data-value="${value}"
             onclick="${handler}(this.dataset.value)">
-            <b>${r.term_id}</b><br>
-            <small>${r.indonesian}</small>
+            <b>${title}</b><br>
+            <small>${subtitle}</small>
         </div>`;
     });
 
@@ -390,6 +425,16 @@ function selectLaw(keyword){
 
     let results = filterUU(keyword);
     renderUU(results);
+}
+
+function selectCase(judul){
+    let input = document.getElementById("caseSearch");
+    input.value = judul;
+
+    clearSuggestions("caseSuggestions");
+
+    let results = filterCases(judul);
+    renderCases(results);
 }
 
 // ==================
