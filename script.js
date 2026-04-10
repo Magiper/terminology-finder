@@ -533,8 +533,8 @@ function switchTab(event, tab){
         document.getElementById("lawTab").classList.add("active");
     }
 
-    if(tab === "history"){
-        document.getElementById("historyTab").classList.add("active");
+    if(tab === "case"){
+        document.getElementById("caseTab").classList.add("active");
         showHistory();
     }
 
