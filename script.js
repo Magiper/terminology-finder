@@ -10,6 +10,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let database = [];
 let uuDatabase = [];
 let caseDatabase = [];
+let readingDatabase = [];
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 
 // =====================
@@ -67,12 +68,31 @@ async function loadCases(){
         return;
     }
 
-    uuDatabase = await res.json();
+    caseDatabase = await res.json();
+}
+
+async function loadReading(){
+    let res = await fetch(`${SUPABASE_URL}/rest/v1/reading-db`, {
+        method: "GET",
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json"
+        }
+    });
+    
+    if(!res.ok){
+        console.error("Error loading reading");
+        return;
+    }
+
+    readingDatabase = await res.json();
 }
 
 loadTerms();
 loadUU();
 loadCases();
+loadReading();
 
 // ====================
 // SEARCH (TERMS)
@@ -139,7 +159,7 @@ document.getElementById("caseSearch").addEventListener("input", function(){
 
     if(query === ""){
         clearSuggestions("caseSuggestions");
-        clearResults("historyResults");
+        clearResults("caseResults");
         return;
     }
 
@@ -353,7 +373,35 @@ function renderCases(results){
         html += `</div>`;
     });
 
-    document.getElementById("historyResults").innerHTML = html;
+    document.getElementById("caseResults").innerHTML = html;
+}
+
+function renderReading(){
+    let html = "";
+
+    readingDatabase.forEach(r => {
+        html += `<div class="result-card">`;
+
+        html += `<div class="term">${r.judul}</div>`;
+        html += `<small><b>Kata Kunci:</b> ${r.kata_kunci}</small><br><br>`;
+
+        html += `
+        <div class="item">
+            <a href="${r.link}" target="_blank" style="color:#4da3ff;">
+                📂 Buka File
+            </a>
+        </div>`;
+
+        html += `
+        <div class="notes-block">
+            <b>Kesimpulan:</b><br>
+            ${r.kesimpulan}
+        </div>`;
+
+        html += `</div>`;
+    });
+
+    document.getElementById("readingResults").innerHTML = html;
 }
 
 // ====================
@@ -535,11 +583,11 @@ function switchTab(event, tab){
 
     if(tab === "case"){
         document.getElementById("caseTab").classList.add("active");
-        showHistory();
     }
 
     if(tab === "reading"){
         document.getElementById("readingTab").classList.add("active");
+        renderReading();
     }
 }
 
