@@ -249,14 +249,12 @@ function renderResults(results, query=""){
 
         // PRIMARY
         if(t?.primary){
+            html += `<div class="section primary"><div class="section-title">Primary</div>`;
             html += `
-            <div class="section primary">
-                <div class="section-title">Primary</div>
-                <div class="item primary">
-                    🟢 ${highlight(t.primary.term, query)}
-                    <small>(${t.primary.context})</small>
-                    <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
-                </div>
+            <div class="item primary">
+                🟢 ${highlight(t.primary.term, query)}
+                <small>(${t.primary.context})</small>
+                <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
             </div>`;
         }
 
