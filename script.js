@@ -358,10 +358,9 @@ function renderCases(results){
     results.forEach(c => {
         html += `<div class="result-card">`;
         html += `<div class="term">${c.judul}</div>`;
-        html += `<small>${c.kategori}</small>`;
-        html += `<div class="notes-block"><b>UU Digunakan:</b><br>`;
+        html += `<div class="notes-block"><b>Kategori:</b><br>`;
 
-        c.uu_yang_digunakan.forEach(u=>{
+        c.kategori.forEach(u=>{
             html += `• ${u}<br>`;
         });
         html += `</div>`;
