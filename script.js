@@ -265,7 +265,7 @@ function renderResults(results, query=""){
             html += `<div class="section alt"><div class="section-title">Alternatives</div>`;
             t.alternatives.forEach(a=>{
                 html += `
-                <div class="item">
+                <div class="item alt">
                     🟡 ${highlight(a.term, query)}
                     <small>(${a.context})</small>
                     <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
