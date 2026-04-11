@@ -390,7 +390,7 @@ function renderReading(){
         html += `<div class="result-card">`;
 
         html += `<div class="term">${r.judul}</div>`;
-        html += `<small><b>Kata Kunci:</b> ${r.kategori}</small><br>`;
+        html += `<small><b>Kategori:</b> ${r.kategori}</small><br>`;
 
         html += `
         <div class="item">
