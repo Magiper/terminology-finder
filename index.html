@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
 <meta charset="UTF-8">
@@ -9,373 +9,354 @@
 
 <style>
 
+/* ===== GLOBAL ===== */
 body{
   font-family: "Segoe UI", sans-serif;
   margin:0;
-  background: linear-gradient(#0b2a3a, #0b2a3a);
+  background: #2F2F35;
+  overflow: hidden;
 }
 
-/* HERO */
-.hero{
-  height: 240px;
-  background: url("background.jpg") center/cover no-repeat;
-  position: relative;
-}
-
-/* DARK OVERLAY */
-.overlay{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(10, 20, 40, 0.6);
-}
-
-/* HERO CONTENT */
-.hero-content{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #ffd166;
-}
-
-/* LOGO */
-.logo{
-  width: 70px;
-  margin-bottom: 10px;
-}
-
-.hero h1{
-  font-size: 22px;
-  line-height: 1.4;
-}
-
-.search-panel{
-  width:90%;
-  max-width: 420px;
-  margin: 20px auto 40px;
-  background: #213a4a;
-  padding:30px;
-  border-radius:10px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.5);
-}
-
-.result-card{
-  background:#2b4a5c;
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 6px;
-  color: white;
-  line-height: 1.6;
-  font-size: 14px;
-}
-
-.input-wrapper{
-  position: relative;
-  margin: 12px 0;
-}
-
-.input-wrapper input{
-  width: 100%;
-  padding: 12px 38px;
-  border-radius: 10px;
-  border: none;
-  font-size: 16px;
-  outline: none;
-  box-sizing: border-box;
-}
-
-/* ICON */
-.icon{
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-}
-
-/* CLEAR BUTTON */
-.clear{
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  display: none;
-}
-
-/* SHOW CLEAR WHEN TYPING */
-.input-wrapper input:not(:placeholder-shown) + .clear{
-  display: block;
-}
-
-/* DROPDOWN */
-.suggestions{
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  border-radius: 8px;
-  margin-top: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 10;
-}
-
-.suggestion-item{
-  padding: 10px;
-  cursor: pointer;
-}
-
-.suggestion-item:hover{
-  background: #eee;
-}
-
-.term{
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.translation{
-  background:#4a90e2;
-  padding:4px 8px;
-  border-radius:4px;
-  display:inline-block;
-  margin:3px;
-  font-size:12px;
-}
-
-.notes{
-  margin-top:10px;
-  font-size:13px;
-  color:#ffd166;
-}
-
-.footer{
-  text-align:center;
-  margin-top:15px;
-  font-size:12px;
-  color:#ccc;
-}
-
-.speak-btn{
-  margin-left: 6px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.menu{
+/* ===== LAYOUT ===== */
+.app{
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width: 220px;
+  background: #cfcfcf;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-logo{
+  width: 70px;
   margin-bottom: 20px;
 }
 
-.menu-item{
-  flex: 1 1 45%;
-  font-size: 13px;
-  background: #2b4a5c;
-  padding: 10px;
+.nav-item{
+  width: 90%;
+  background: #ddd;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 25px;
   text-align: center;
-  border-radius: 8px;
   cursor: pointer;
-  color: white;
-  font-weight: bold;
+  font-size: 14px;
   transition: 0.2s;
 }
 
-.menu-item:hover{
-  background: #3b5f75;
+.nav-item:hover{
+  background: #bbb;
 }
 
-.menu-item:active{
+/* ACTIVE MENU */
+.nav-item.active{
   background: #4a90e2;
+  color: white;
+  font-weight: bold;
+  transform: scale(1.05);
 }
 
-/* Tabs */
-.tab{
-  display: none;
-}
-
-.tab.active{
-  display: block;
-}
-
-.term-title{
-  font-size:16px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-.section{
-  margin-top: 10px;
-}
-
-.section-title{
-  margin-bottom: 4px;
+/* CONTACT */
+.contact{
+  margin-top: auto;
   font-size: 12px;
-  opacity: 0.7;
+  text-align: center;
 }
 
-.item{
-  background: #2b4a5c;
-  padding: 6px;
-  border-radius: 6px;
-  margin-bottom: 4px;
+/* ===== MAIN PANEL ===== */
+.main{
+  flex: 1;
+  padding: 20px;
+  background: #4a4a52;
+  border-radius: 20px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.item small{
-  display: block;
-  font-size: 11px;
-  opacity: 0.7;
+/* ===== MAIN PANEL ===== */
+.mini-hero{
+  height: 140px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  background: url("background.jpg") center/cover no-repeat;
+  margin-bottom: 15px;
 }
 
-.item.bad{
-  background: #7a2c2c;
+/* DARK OVERLAY */
+.hero-overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
 }
 
-.item.alt{
-  background: #757a2c;
+/* CONTENT */
+.hero-content{
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
-.item.primary{
-  background: #397a2c;
+/* LOGO */
+.hero-logo{
+  width: 70px;
 }
 
-.notes-block{
-  margin-top: 10px;
-  font-size: 13px;
+/* TEXT */
+.hero-text{
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  background: #7a7a82;
+  padding: 15px;
+  border-radius: 30px;
   color: #ffd166;
+  font-weight: bold;
+  overflow: hidden;
 }
 
-.related{
+/* MOVING TEXT */
+.marquee{
+  white-space: nowrap;
+}
+
+.marquee span{
+  display: inline-block;
+  padding-left: 100%;
+  animation: marqueeMove 15s linear infinite;
+}
+
+@keyframes marqueeMove{
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ===== SEARCH ===== */
+.search-box{
+  margin: 20px auto;
+  max-width: 420px;
+  width: 100%;
+  transition: 0.3s;
+}
+
+.search-box input{
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{
+  flex: 1;
+  background: #2F2F35;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
   margin-top: 10px;
+  transition: 0.3s;
+  padding: 25px;
+  overflow-y: auto;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align: center;
   font-size: 12px;
-  opacity: 0.8;
+  color: #ccc;
+  margin-top: 10px;
 }
 
-.related-item{
-  cursor: pointer;
-  color: #4da3ff;
-  margin-right: 6px;
-  padding: 2px 6px;
-  border-radius: 4px;
+/* ===== ANIMATION (content fade) ===== */
+.fade{
+  animation: fadeIn 0.3s ease;
 }
 
-.related-item:hover{
-  text-decoration: underline;
-  background: #2b4a5c;
-}
-
-.highlight{
-  background: #ffd166;
-  color: black;
-  padding: 1px 3px;
-  border-radius: 3px;
-}
-
-@media (max-width: 480px){
-  .hero{
-    height: 180px;
-  }
-
-  .hero h1{
-    font-size: 16px;
-  }
-
-  .logo{
-    width: 50px;
-  }
-
-  .search-panel{
-    padding: 20px;
-  }
-
-  .menu-item{
-    font-size: 12px;
-    padding: 8px;
-  }
-
-  .result-card{
-    font-size: 13px;
-  }
+@keyframes fadeIn{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: translateY(0); }
 }
   
 </style>
-
 </head>
 
 <body>
-<!-- HERO SECTION -->
-<div class="hero">
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <img src= "logo.png" class="logo">
 
-    <h1>
-      DIREKTORAT JENDERAL PEMASYARAKATAN<br>
-      SULAWESI TENGGARA
-    </h1>
+<div class="app">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+
+    <img src="logo.png" class="sidebar-logo">
+
+    <div class="nav-item active" onclick="switchFeature(event, 'term')">🔍 Terminologi</div>
+    <div class="nav-item" onclick="switchFeature(event, 'law')">📜 UU Internasional</div>
+    <div class="nav-item" onclick="switchFeature(event, 'case')">📂 Riwayat Kasus</div>
+    <div class="nav-item" onclick="switchFeature(event, 'reading')">📖 Daftar Bacaan</div>
+
+    <div class="contact">
+      Punya Kendala?<br>
+      0877-7155-5574 (Hadi)
+    </div>
 
   </div>
-  
-</div>
 
-<!-- SEARCH PANEL -->
-<div class="search-panel">
+  <!-- ===== MAIN ===== -->
+  <div class="main">
 
-  <!-- MENU -->
-  <div class="menu">
-    <div class="menu-item active" onclick="switchTab(event, 'term')">🔍 Terminologi</div>
-    <div class="menu-item" onclick="switchTab(event, 'law')">🗿 UU Internasional</div>
-    <div class="menu-item" onclick="switchTab(event, 'case')">📼 Riwayat Kasus</div>
-    <div class="menu-item" onclick="switchTab(event, 'reading')">📖 Daftar Bacaan</div>
-  </div>
+    <div class="mini-hero">
+      <div class="hero-overlay"></div>
 
-  <!-- CONTENT -->
-  <div id="termTab" class="tab active">
-    <div class="input-wrapper">
-      <span class="icon">🔍</span>
+      <div class="hero-content">
+        <img src="logo.png" class="hero-logo">
+
+        <div class="hero-text">
+          LAW TERMINOLOGY FINDER
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="marquee">
+        <span>DIREKTORAT JENDERAL PEMASYARAKATAN SULAWESI TENGGARA</span>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-box" id="searchBox">
       <input id="search" placeholder="Cari terminologi...">
-      <span class="clear" onclick="clearInput('search')">❌</span>
-      <div class="suggestions" id="suggestions"></div>
     </div>
-    <div id="results"></div>
-  </div>
 
-  <div id="lawTab" class="tab">
-    <div class="input-wrapper">
-      <span class="icon">🔍</span>
-      <input id="lawSearch" placeholder="Cari hukum internasional...">
-      <span class="clear" onclick="clearInput('lawSearch')">❌</span>
-      <div class="suggestions" id="lawSuggestions"></div>
+    <!-- RESULT -->
+    <div class="result-panel fade" id="resultPanel">
+      SEARCH RESULT
     </div>
-    <div id="lawResults"></div>
-  </div>
 
-  <div id="caseTab" class="tab">
-    <div class="input-wrapper">
-      <span class="icon">🔍</span>
-      <input id="caseSearch" placeholder="Cari Kasus...">
-      <span class="clear" onclick="clearInput('caseSearch')">❌</span>
-      <div class="suggestions" id="caseSuggestions"></div>
-    </div>
-    <div id="caseResults"></div>
+    <!-- FOOTER -->
+    <div class="footer">© LEX-KOMTRANS KANWILPAS</div>
   </div>
-
-  <div id="readingTab" class="tab">
-    <div id="readingResults"></div>
-  </div>
-
-  <div class="footer">© LEX-KOMTRANS KANWILPAS</div>
 
 </div>
 
 <script src="script.js"></script>
+
+<script>
+
+/* ===== FEATURE SWITCHER ===== */
+let currentFeature = "term";
+
+function switchFeature(event, feature){
+
+  currentFeature = feature;
+
+  // highlight menu
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+
+
+  // reset search UI
+  const searchBox = document.getElementById("searchBox");
+  const mainInput = document.getElementById("search");
+
+  mainInput.value = "";
+
+  // remove old events
+  mainInput.oninput = null;
+  mainInput.onkeydown = null;
+
+  // ===== TERMINOLOGI =====
+  if(feature === "term"){
+    searchBox.style.display = "block";
+    mainInput.placeholder = "Cari terminologi...";
+
+    // connect to original search
+    mainInput.oninput = function(){
+      document.getElementById("search").dispatchEvent(new Event("input"));
+    };
+
+    mainInput.onkeydown = function(e){
+      if(e.key === "Enter"){
+        document.getElementById("search").dispatchEvent(new KeyboardEvent("keydown", {key:"Enter"}));
+      }
+    };
+  }
+
+  // ===== LAW =====
+  else if(feature === "law"){
+    searchBox.style.display = "block";
+    mainInput.placeholder = "Cari hukum internasional...";
+
+    // redirect main input -> lawSearch
+    mainInput.oninput = function(){
+      const hiddenInput = document.getElementById("lawSearch");
+
+      hiddenInput.value = mainInput.value;
+
+      hiddenInput.dispatchEvent(new Event("input"));
+    };
+
+    mainInput.onkeydown = function(e){
+      if(e.key === "Enter"){
+        document.getElementById("lawSearch").dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}));
+      }
+    };
+  }
+
+  // ===== CASE =====
+  else if(feature === "case"){
+    searchBox.style.display = "block";
+    mainInput.placeholder = "Cari kasus...";
+
+    mainInput.oninput = function(){
+      const hiddenInput = document.getElementById("caseSearch");
+
+      hiddenInput.value = mainInput.value;
+
+      hiddenInput.dispatchEvent(new Event("input"));
+    };
+
+    mainInput.onkeydown = function(e){
+      if(e.key === "Enter"){
+        document.getElementById("caseSearch").dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}));
+      }
+    };
+  }
+
+  // ===== READING =====
+  else if(feature === "reading"){
+    searchBox.style.display = "none";
+    renderReading();
+  }
+}
+
+</script>
 
 </body>
 </html>
