@@ -422,21 +422,11 @@ body{
 
     <div class="result-panel fade">
 
-      <!-- TERMINOLOGY -->
       <div id="globalSuggestions"></div>
+
       <div id="results"></div>
-
-      <!-- LAW -->
-      <input id="lawSearch" style="display: none;">
-      <div id="globalSuggestions"></div>
       <div id="lawResults"></div>
-
-      <!-- CASE -->
-      <input id="caseSearch" style="display: none;">
-      <div id="globalSuggestions"></div>
       <div id="caseResults"></div>
-
-      <!-- READING -->
       <div id="readingResults"></div>
     </div>
 
@@ -457,76 +447,67 @@ function switchFeature(event, feature){
 
   currentFeature = feature;
 
-  // HIDE ALL SUGGESTIONS
-  document.getElementById("suggestions").style.display = "none";
-  document.getElementById("lawSuggestions").style.display = "none";
-  document.getElementById("caseSuggestions").style.display = "none";
-
-  // CLEAR SUGGESTIONS
-  clearSuggestions("suggestions");
-  clearSuggestions("lawSuggestions");
-  clearSuggestions("caseSuggestions");
-
-  // ACTIVE MENU
+  // ACTIVE SIDEBAR
   document.querySelectorAll('.nav-item').forEach(el=>{
     el.classList.remove('active');
   });
 
   event.currentTarget.classList.add('active');
 
-
-  // reset search UI
+  // ELEMENTS
   const searchBox = document.getElementById("searchBox");
   const mainInput = document.getElementById("search");
+  const suggestions = document.getElementById("globalSuggestions");
+
+  // RESET SEARCH
+  mainInput.value = "";
 
   // CLEAR UI
-  mainInput.value = "";
+  clearSuggestions("globalSuggestions");
 
   clearResults("results");
   clearResults("lawResults");
   clearResults("caseResults");
   clearResults("readingResults");
 
-  clearSuggestions("suggestions");
-  clearSuggestions("lawSuggestions");
-  clearSuggestions("caseSuggestions");
-
+  // HIDE ALL RESULT SECTIONS
   document.getElementById("results").style.display = "none";
   document.getElementById("lawResults").style.display = "none";
   document.getElementById("caseResults").style.display = "none";
   document.getElementById("readingResults").style.display = "none";
+
+  // REMOVE OLD EVENTS
+  mainInput.oninput = null;
+  mainInput.onkeydown = null;
 
   // ===== TERMINOLOGI =====
   if(feature === "term"){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari terminologi...";
     document.getElementById("results").style.display = "block";
-    document.getElementById("suggestions").style.display = "block";
-    document.getElementById("lawSuggestions").style.display = "none";
-    document.getElementById("caseSuggestions").style.display = "none";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
-      document.getElementById("suggestions").style.display = "block";
+      suggestions.style.display = "block";
 
       if(query === ""){
         showHistory();
-        clearSuggestions("suggestions");
+        clearSuggestions("globalSuggestions");
         return;
       }
 
       let results = filterTerms(query);
 
       updateHistory(results);
-      renderSuggestions(results, "suggestions", "selectSuggestion");
+      renderSuggestions(results, "globalSuggestions", "selectSuggestion");
     };
 
     mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterTerms(query);
-        clearSuggestions("suggestions");
+        clearSuggestions("globalSuggestions");
         renderResults(results, query);
       }
     };
@@ -537,31 +518,28 @@ function switchFeature(event, feature){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari hukum internasional...";
     document.getElementById("lawResults").style.display = "block";
-    document.getElementById("suggestions").style.display = "none";
-    document.getElementById("lawSuggestions").style.display = "block";
-    document.getElementById("caseSuggestions").style.display = "none";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
-      document.getElementById("lawSuggestions").style.display = "block";
+      suggestions.style.display = "block";
 
       if(query.length < 3){
         clearResults("lawResults");
-        clearSuggestions("lawSuggestions");
+        clearSuggestions("globalSuggestions");
         return;
       }
 
       let results = filterUU(query);
 
-      renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
+      renderSuggestions(results, "globalSuggestions", "selectLaw", "law");
     };
 
     mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterUU(query);
-        clearSuggestions("lawSuggestions");
+        clearSuggestions("globalSuggestions");
         renderUU(results);
       }
     };
@@ -572,29 +550,28 @@ function switchFeature(event, feature){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari kasus...";
     document.getElementById("caseResults").style.display = "block";
-    document.getElementById("suggestions").style.display = "none";
-    document.getElementById("lawSuggestions").style.display = "none";
-    document.getElementById("caseSuggestions").style.display = "block";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
+      suggestions.style.display = "block";
+
       if(query === ""){
-        clearSuggestions("caseSuggestions");
         clearResults("caseResults");
+        clearSuggestions("globalSuggestions");
         return;
       }
 
       let results = filterCases(query);
 
-      renderSuggestions(results, "caseSuggestions", "selectCase", "case");
+      renderSuggestions(results, "globalSuggestions", "selectCase", "case");
     };
 
     mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterCases(query);
-        clearSuggestions("caseSuggestions");
+        clearSuggestions("globalSuggestions");
         renderCases(results);
       }
     };
