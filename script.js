@@ -595,39 +595,6 @@ function speak(text){
 // =================
 // TAB
 // =================
-function switchTab(event, tab){
-    // remove active menu
-    document.querySelectorAll(".menu-item").forEach(el=>{
-        el.classList.remove("active");
-    });
-
-    // activate clicked
-    event.target.classList.add("active");
-
-    // hide all tabs
-    document.querySelectorAll(".tab").forEach(el=>{
-        el.classList.remove("active");
-    });
-
-    // show selected tab
-    if(tab === "term"){
-        document.getElementById("termTab").classList.add("active");
-    }
-
-    if(tab === "law"){
-        document.getElementById("lawTab").classList.add("active");
-    }
-
-    if(tab === "case"){
-        document.getElementById("caseTab").classList.add("active");
-    }
-
-    if(tab === "reading"){
-        document.getElementById("readingTab").classList.add("active");
-        currentPage = 1;
-        renderReading();
-    }
-}
 
 function searchRelated(term){
     let input = document.getElementById("search");
