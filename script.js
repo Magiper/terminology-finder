@@ -547,7 +547,7 @@ function selectSuggestion(term){
     input.value = term;
 
     clearSuggestions("globalSuggestions");
-    document.getElementById("suggestions").style.display = "none";
+    document.getElementById("globalSuggestions").style.display = "none";
 
     let results = filterTerms(term);
 
@@ -556,19 +556,17 @@ function selectSuggestion(term){
 }
 
 function selectLaw(keyword){
-    let input = document.getElementById("lawSearch");
+    let input = document.getElementById("search");
     input.value = keyword;
 
     clearSuggestions("globalSuggestions");
-
-    document.getElementById("lawSuggestions").style.display = "none";
 
     let results = filterUU(keyword);
     renderUU(results);
 }
 
 function selectCase(judul){
-    let input = document.getElementById("caseSearch");
+    let input = document.getElementById("search");
     input.value = judul;
 
     clearSuggestions("globalSuggestions");
