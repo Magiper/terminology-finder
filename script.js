@@ -318,34 +318,70 @@ function renderUU(results){
     let html = "";
 
     results.forEach(r => {
+
         r.uu_internasional.forEach(u => {
-            html += `<div class="result-card">`;
-            html += `<div class="term">${r.kata_kunci}</div>`;
-            html += `<b>${u.nama_konvensi}</b>`;
-            
-            u.articles.forEach(a=>{
+
+            html += `
+            <div class="result-card uu-layout">
+
+                <!-- LEFT -->
+                <div class="uu-left">
+
+                    <div class="term">
+                        ${r.kata_kunci}
+                    </div>
+
+                    <div class="uu-title">
+                        ${u.nama_konvensi}
+                    </div>
+            `;
+
+            u.articles.forEach(a => {
+
                 html += `
                 <div class="item">
+
                     <b>${a.article}</b><br>
-                    ${a.isi}<br>
+
+                    ${a.isi}<br><br>
+
                     <small>${a.terjemahan}</small>
-                </div>`;
+
+                </div>
+                `;
             });
 
             html += `
-            <div class="notes-block">
-                <b>Kesimpulan:</b><br>
-                ${u.kesimpulan}<br>
-                <small>${u.terjemahan_kesimpulan}</small>
-            </div>`;
+                    <div class="notes-block">
+                        <b>Kesimpulan:</b><br>
+                        ${u.kesimpulan}<br><br>
 
-            html += `
-            <div class="notes-block">
-                <b>Relevansi:</b><br>
-                ${u.relevansi}
-            </div>`;
+                        <small>
+                            ${u.terjemahan_kesimpulan}
+                        </small>
+                    </div>
 
-            html += `</div>`;
+                </div>
+
+                <!-- RIGHT -->
+                <div class="uu-right">
+
+                    <div class="relevansi-box">
+
+                        <div class="relevansi-title">
+                            Relevansi
+                        </div>
+
+                        <div class="relevansi-content">
+                            ${u.relevansi}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            `;
         });
     });
 
@@ -384,25 +420,44 @@ function renderReading(){
     let paginatedData = readingDatabase.slice(start, end);
 
     paginatedData.forEach(r => {
-        html += `<div class="result-card">`;
-
-        html += `<div class="term">${r.judul}</div>`;
-        html += `<small><b>Kategori:</b> ${r.kategori}</small><br>`;
-
         html += `
-        <div class="item">
-            <a href="${r.link}" target="_blank" style="color:#4da3ff;">
-                📂 Buka File
-            </a>
-        </div>`;
+        <div class="result-card reading-layout">
 
-        html += `
-        <div class="notes-block">
-            <b>Kesimpulan:</b><br>
-            ${r.kesimpulan}
-        </div>`;
+            <!-- LEFT -->
+            <div class="reading-left">
 
-        html += `</div>`;
+                <div class="term">
+                    ${r.judul}
+                </div>
+
+                <small>
+                    <b>Kategori:</b> ${r.kategori}
+                </small>
+
+                <div class="item">
+                    <a href="${r.link}" target="_blank"
+                       style="color:#4da3ff;">
+                        📂 English File
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="reading-right">
+
+                <div class="notes-block">
+
+                    <b>Terjemahan Indonesia:</b><br><br>
+
+                    ${r.kesimpulan}
+
+                </div>
+
+            </div>
+
+        </div>
+        `;
     });
 
     document.getElementById("readingResults").innerHTML = html;
