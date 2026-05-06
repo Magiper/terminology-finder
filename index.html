@@ -171,15 +171,12 @@ body{
   flex: 1;
   background: #2F2F35;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 32px;
   margin-top: 10px;
   transition: 0.3s;
-  padding: 25px;
+  padding: 20px;
   overflow-y: auto;
+
+  display: block;
 }
 
 /* ===== RESULT CARDS ===== */
@@ -255,10 +252,20 @@ body{
 .suggestion-item{
   background:#4b4b57;
   color:white;
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:6px;
-  cursor:pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.suggestion-item b{
+  font-size: 14px;
+}
+
+.suggestion-item small{
+  opacity: 0.7;
 }
 
 .suggestion-item:hover{
@@ -385,7 +392,7 @@ function switchFeature(event, feature){
   const mainInput = document.getElementById("search");
 
   // CLEAR UI
-  searchInput.value = "";
+  mainInput.value = "";
 
   clearResults("results");
   clearResults("lawResults");
@@ -396,12 +403,18 @@ function switchFeature(event, feature){
   clearSuggestions("lawSuggestions");
   clearSuggestions("caseSuggestions");
 
+  document.getElementById("results").style.display = "none";
+  document.getElementById("lawResults").style.display = "none";
+  document.getElementById("caseResults").style.display = "none";
+  document.getElementById("readingResults").style.display = "none";
+
   // ===== TERMINOLOGI =====
   if(feature === "term"){
     searchBox.style.display = "block";
-    searchInput.placeholder = "Cari terminologi...";
+    mainInput.placeholder = "Cari terminologi...";
+    document.getElementById("results").style.display = "block";
 
-    searchInput.oninput = function(){
+    mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
       document.getElementById("suggestions").style.display = "block";
@@ -418,7 +431,7 @@ function switchFeature(event, feature){
       renderSuggestions(results, "suggestions", "selectSuggestion");
     };
 
-    searchInput.onkeydown = function(e){
+    mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterTerms(query);
@@ -431,9 +444,10 @@ function switchFeature(event, feature){
   // ===== LAW =====
   else if(feature === "law"){
     searchBox.style.display = "block";
-    searchInput.placeholder = "Cari hukum internasional...";
+    mainInput.placeholder = "Cari hukum internasional...";
+    document.getElementById("lawResults").style.display = "block";
 
-    searchInput.oninput = function(){
+    mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
       document.getElementById("lawSuggestions").style.display = "block";
@@ -449,7 +463,7 @@ function switchFeature(event, feature){
       renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
     };
 
-    searchInput.onkeydown = function(e){
+    mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterUU(query);
@@ -462,9 +476,10 @@ function switchFeature(event, feature){
   // ===== CASE =====
   else if(feature === "case"){
     searchBox.style.display = "block";
-    searchInput.placeholder = "Cari kasus...";
+    mainInput.placeholder = "Cari kasus...";
+    document.getElementById("caseResults").style.display = "block";
 
-    searchInput.oninput = function(){
+    mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
 
       if(query === ""){
@@ -478,7 +493,7 @@ function switchFeature(event, feature){
       renderSuggestions(results, "caseSuggestions", "selectCase", "case");
     };
 
-    searchInput.onkeydown = function(e){
+    mainInput.onkeydown = function(e){
       if(e.key === "Enter"){
         let query = this.value.trim().toLowerCase();
         let results = filterCases(query);
@@ -491,6 +506,7 @@ function switchFeature(event, feature){
   // ===== READING =====
   else if(feature === "reading"){
     searchBox.style.display = "none";
+    document.getElementById("readingResults").style.display = "block";
     renderReading();
   }
 }
