@@ -283,6 +283,60 @@ body{
   margin-top: 10px;
 }
 
+/* ===== UU LAYOUT ===== */
+.uu-layout{
+  display: flex;
+  gap: 20px;
+}
+
+.uu-left{
+  flex: 2;
+}
+
+.uu-right{
+  flex: 1;
+}
+
+.uu-title{
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.relevansi-box{
+  background: #4b4b57;
+  padding: 15px;
+  border-radius: 12px;
+  height: 100%;
+}
+
+.relevansi-title{
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd166;
+  margin-bottom: 10px;
+}
+
+/* ===== READING LAYOUT ===== */
+.reading-layout{
+  display: flex;
+  gap: 20px;
+}
+
+.reading-left{
+  flex: 1;
+}
+
+.reading-right{
+  flex: 1;
+}
+
+@media(max-width: 900px){
+  .uu-layout,
+  .reading-layout{
+    flex-direction: column;
+  }
+}
+
 /* ===== ANIMATION (content fade) ===== */
 .fade{
   animation: fadeIn 0.3s ease;
@@ -384,6 +438,16 @@ function switchFeature(event, feature){
 
   currentFeature = feature;
 
+  // HIDE ALL SUGGESTIONS
+  document.getElementById("suggestions").style.display = "none";
+  document.getElementById("lawSuggestions").style.display = "none";
+  document.getElementById("caseSuggestions").style.display = "none";
+
+  // CLEAR SUGGESTIONS
+  clearSuggestions("suggestions");
+  clearSuggestions("lawSuggestions");
+  clearSuggestions("caseSuggestions");
+
   // ACTIVE MENU
   document.querySelectorAll('.nav-item').forEach(el=>{
     el.classList.remove('active');
@@ -418,6 +482,9 @@ function switchFeature(event, feature){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari terminologi...";
     document.getElementById("results").style.display = "block";
+    document.getElementById("suggestions").style.display = "block";
+    document.getElementById("lawSuggestions").style.display = "none";
+    document.getElementById("caseSuggestions").style.display = "none";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
@@ -451,6 +518,9 @@ function switchFeature(event, feature){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari hukum internasional...";
     document.getElementById("lawResults").style.display = "block";
+    document.getElementById("suggestions").style.display = "none";
+    document.getElementById("lawSuggestions").style.display = "block";
+    document.getElementById("caseSuggestions").style.display = "none";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
@@ -483,6 +553,9 @@ function switchFeature(event, feature){
     searchBox.style.display = "block";
     mainInput.placeholder = "Cari kasus...";
     document.getElementById("caseResults").style.display = "block";
+    document.getElementById("suggestions").style.display = "none";
+    document.getElementById("lawSuggestions").style.display = "none";
+    document.getElementById("caseSuggestions").style.display = "block";
 
     mainInput.oninput = function(){
       let query = this.value.trim().toLowerCase();
