@@ -154,9 +154,10 @@ body{
 /* ===== SEARCH ===== */
 .search-box{
   margin: 20px auto;
-  max-width: 420px;
+  max-width: 520px;
   width: 100%;
   transition: 0.3s;
+  position: relative;
 }
 
 .search-box input{
@@ -166,6 +167,21 @@ body{
   border: none;
   font-size: 16px;
   outline: none;
+}
+
+.clear-btn{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.clear-btn:hover{
+  color: black;
 }
 
 /* ===== RESULT PANEL ===== */
@@ -306,7 +322,9 @@ body{
   background: #4b4b57;
   padding: 15px;
   border-radius: 12px;
-  height: 100%;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
 }
 
 .relevansi-title{
@@ -399,22 +417,23 @@ body{
     <!-- SEARCH -->
     <div class="search-box" id="searchBox">
       <input id="search" placeholder="Cari terminologi...">
+      <button class="clear-btn" onclick="clearMainSearch()">❌</button>
     </div>
 
     <div class="result-panel fade">
 
       <!-- TERMINOLOGY -->
-      <div id="suggestions"></div>
+      <div id="globalSuggestions"></div>
       <div id="results"></div>
 
       <!-- LAW -->
       <input id="lawSearch" style="display: none;">
-      <div id="lawSuggestions"></div>
+      <div id="globalSuggestions"></div>
       <div id="lawResults"></div>
 
       <!-- CASE -->
       <input id="caseSearch" style="display: none;">
-      <div id="caseSuggestions"></div>
+      <div id="globalSuggestions"></div>
       <div id="caseResults"></div>
 
       <!-- READING -->
@@ -587,6 +606,23 @@ function switchFeature(event, feature){
     document.getElementById("readingResults").style.display = "block";
     renderReading();
   }
+}
+
+function clearMainSearch(){
+  const input = document.getElementById("search");
+  input.value = "";
+
+  clearSuggestions("globalSuggestions");
+
+  clearResults("results");
+  clearResults("lawResults");
+  clearResults("caseResults");
+
+  if(currentFeature === "term"){
+    showHistory();
+  }
+
+  input.focus();
 }
 
 </script>
