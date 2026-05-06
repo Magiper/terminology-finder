@@ -101,18 +101,18 @@ loadReading();
 // ====================
 document.getElementById("search").addEventListener("input", function(){
     let query = this.value.trim().toLowerCase();
-    document.getElementById("suggestions").style.display = "block";
+    document.getElementById("globalSuggestions").style.display = "block";
     
     if(query === ""){
         showHistory();
-        clearSuggestions("suggestions");
+        clearSuggestions("globalSuggestions");
         return;
     }
     
     let results = filterTerms(query);
 
     updateHistory(results);
-    renderSuggestions(results, "suggestions", "selectSuggestion");
+    renderSuggestions(results, "globalSuggestions", "selectSuggestion");
 });
 
 document.getElementById("search").addEventListener("keydown", function(e){
@@ -120,7 +120,7 @@ document.getElementById("search").addEventListener("keydown", function(e){
         let query = this.value.trim().toLowerCase();
         let results = filterTerms(query);
 
-        clearSuggestions("suggestions");
+        clearSuggestions("globalSuggestions");
         renderResults(results, query);
     }
 });
@@ -130,17 +130,17 @@ document.getElementById("search").addEventListener("keydown", function(e){
 // ====================
 document.getElementById("lawSearch").addEventListener("input", function(){
     let query = this.value.trim().toLowerCase();
-    document.getElementById("lawSuggestions").style.display = "block";
+    document.getElementById("globalSuggestions").style.display = "block";
 
     if(query.length < 3){
         clearResults("lawResults");
-        clearSuggestions("lawSuggestions")
+        clearSuggestions("globalSuggestions")
         return;
     }
 
     let results = filterUU(query);
 
-    renderSuggestions(results, "lawSuggestions", "selectLaw", "law");
+    renderSuggestions(results, "globalSuggestions", "selectLaw", "law");
 });
 
 document.getElementById("lawSearch").addEventListener("keydown", function(e){
@@ -148,7 +148,7 @@ document.getElementById("lawSearch").addEventListener("keydown", function(e){
         let query = this.value.trim().toLowerCase();
         let results = filterUU(query);
 
-        clearSuggestions("lawSuggestions");
+        clearSuggestions("globalSuggestions");
         renderUU(results);
     }
 });
@@ -160,14 +160,14 @@ document.getElementById("caseSearch").addEventListener("input", function(){
     let query = this.value.trim().toLowerCase();
 
     if(query === ""){
-        clearSuggestions("caseSuggestions");
+        clearSuggestions("globalSuggestions");
         clearResults("caseResults");
         return;
     }
 
     let results = filterCases(query);
 
-    renderSuggestions(results, "caseSuggestions", "selectCase", "case");
+    renderSuggestions(results, "globalSuggestions", "selectCase", "case");
 });
 
 document.getElementById("caseSearch").addEventListener("keydown", function(e){
@@ -175,7 +175,7 @@ document.getElementById("caseSearch").addEventListener("keydown", function(e){
         let query = this.value.trim().toLowerCase();
         let results = filterCases(query);
 
-        clearSuggestions("caseSuggestions");
+        clearSuggestions("globalSuggestions");
         renderCases(results);
     }
 });
@@ -546,7 +546,7 @@ function selectSuggestion(term){
     
     input.value = term;
 
-    clearSuggestions("suggestions");
+    clearSuggestions("globalSuggestions");
     document.getElementById("suggestions").style.display = "none";
 
     let results = filterTerms(term);
@@ -559,7 +559,7 @@ function selectLaw(keyword){
     let input = document.getElementById("lawSearch");
     input.value = keyword;
 
-    clearSuggestions("lawSuggestions");
+    clearSuggestions("globalSuggestions");
 
     document.getElementById("lawSuggestions").style.display = "none";
 
@@ -571,7 +571,7 @@ function selectCase(judul){
     let input = document.getElementById("caseSearch");
     input.value = judul;
 
-    clearSuggestions("caseSuggestions");
+    clearSuggestions("globalSuggestions");
 
     let results = filterCases(judul);
     renderCases(results);
@@ -623,10 +623,10 @@ function clearInput(id){
 
     if(id === "search"){
         showHistory();
-        clearSuggestions("suggestions");
+        clearSuggestions("globalSuggestions");
     }else{
         clearResults("lawResults");
-        clearSuggestions("lawSuggestions");
+        clearSuggestions("globalSuggestions");
     }
 
     input.focus();
@@ -659,6 +659,6 @@ function searchRelated(term){
     let query = term.toLowerCase();
     let results = filterTerms(query);
 
-    clearSuggestions("suggestions");
+    clearSuggestions("globalSuggestions");
     renderResults(results, query);
 }
