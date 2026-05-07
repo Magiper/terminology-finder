@@ -126,61 +126,6 @@ document.getElementById("search").addEventListener("keydown", function(e){
 });
 
 // ====================
-// SEARCH (LAWS)
-// ====================
-document.getElementById("lawSearch").addEventListener("input", function(){
-    let query = this.value.trim().toLowerCase();
-    document.getElementById("globalSuggestions").style.display = "block";
-
-    if(query.length < 3){
-        clearResults("lawResults");
-        clearSuggestions("globalSuggestions")
-        return;
-    }
-
-    let results = filterUU(query);
-
-    renderSuggestions(results, "globalSuggestions", "selectLaw", "law");
-});
-
-document.getElementById("lawSearch").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterUU(query);
-
-        clearSuggestions("globalSuggestions");
-        renderUU(results);
-    }
-});
-
-// ====================
-// SEARCH (CASES)
-// ====================
-document.getElementById("caseSearch").addEventListener("input", function(){
-    let query = this.value.trim().toLowerCase();
-
-    if(query === ""){
-        clearSuggestions("globalSuggestions");
-        clearResults("caseResults");
-        return;
-    }
-
-    let results = filterCases(query);
-
-    renderSuggestions(results, "globalSuggestions", "selectCase", "case");
-});
-
-document.getElementById("caseSearch").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterCases(query);
-
-        clearSuggestions("globalSuggestions");
-        renderCases(results);
-    }
-});
-
-// ====================
 // FILTER LOGIC
 // ====================
 function filterTerms(query){
@@ -190,13 +135,14 @@ function filterTerms(query){
         
         let idMatch = item.term_id?.toLowerCase().includes(query);
 
-        let indoMatch = item.indonesian.toLowerCase().includes(query);
+        let indoMatch = item.indonesian?.toLowerCase().includes(query);
 
-        let primaryMatch = item.translations?.primary?.term
-            ?.toLowerCase().includes(query);
+        let primaryMatch = item.translations?.primary?.term?.toLowerCase().includes(query);
 
-        let altMatch = item.translations?.alternatives?.some(a =>
-            a.term.toLowerCase().includes(query)
+        let alternatives = Array.isArray(item.translations?.alternatives) ? item.translations.alternatives : [];
+
+        let altMatch = alternatives.some(a =>
+            a.term?.toLowerCase().includes(query)
         );
 
         return idMatch || indoMatch || primaryMatch || altMatch;
