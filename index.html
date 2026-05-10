@@ -1,764 +1,778 @@
 <!DOCTYPE html>
 <html lang="id">
-
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hukumpedia</title>
-<link rel="icon" type="image/png" href="favicon.png">
-
-<style>
-
-/* ===== GLOBAL ===== */
-body{
-  font-family: "Inter", sans-serif;
-  margin:0;
-  overflow: hidden;
-  background: radial-gradient(circle at top left, rgba(107, 168, 255, 0.18), transparent 30%), radial-gradient(circle at bottom right, rgba(126, 240, 199, 0.15), transparent 30%), linear-gradient(135deg, #071018, #0d1721, #122232);
-  color: white;
-}
-
-/* ===== LAYOUT ===== */
-.app{
-  display: flex;
-  height: 100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-  width: 220px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(18px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.sidebar-logo{
-  width: 70px;
-  margin-bottom: 20px;
-}
-
-.nav-item{
-  width: 90%;
-  background: rgba(255, 255, 255, 0.05);
-  margin: 8px 0;
-  padding: 14px;
-  border-radius: 18px;
-  text-align: center;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.3s;
-  border: 1px solid transparent;
-  color: #dce7f7;
-}
-
-.nav-item:hover{
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(107, 168, 255, 0.3);
-}
-
-/* ACTIVE MENU */
-.nav-item.active{
-  background: linear-gradient(to right, rgba(107, 168, 255, 0.25), rgba(126, 240, 199, 0.18));
-  border: 1px solid rgba(107, 168, 255, 0.4);
-  color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-/* CONTACT */
-.contact{
-  margin-top: auto;
-  font-size: 12px;
-  text-align: center;
-}
-
-/* ===== MAIN PANEL ===== */
-.main{
-  flex: 1;
-  margin: 16px;
-  border-radius: 28px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===== MAIN PANEL ===== */
-.mini-hero{
-  height: 100px;
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  background: url("background.jpg") center/cover no-repeat;
-  margin-bottom: 15px;
-}
-
-/* DARK OVERLAY */
-.hero-overlay{
-  position: absolute;
-  inset: 0;
-  background: rgba(34, 104, 151, 0.555);
-}
-
-/* CONTENT */
-.hero-content{
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-}
-
-/* LOGO */
-.hero-logo{
-  width: 55px;
-  flex-shrink: 0;
-}
-
-/* TEXT */
-.hero-text{
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* ===== HEADER ===== */
-.header{
-  background: #7a7a82;
-  padding: 10px 15px;
-  border-radius: 30px;
-  color: #ffd166;
-  font-weight: bold;
-  overflow: hidden;
-}
-
-/* MOVING TEXT */
-.marquee{
-  white-space: nowrap;
-}
-
-.marquee span{
-  display: inline-block;
-  padding-left: 100%;
-  animation: marqueeMove 15s linear infinite;
-}
-
-@keyframes marqueeMove{
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-/* ===== SEARCH ===== */
-.search-box{
-  margin: 20px auto;
-  max-width: 520px;
-  width: 100%;
-  transition: 0.3s;
-  position: relative;
-}
-
-.search-box input{
-  width: 100%;
-  padding: 18px 20px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  color: white;
-  font-size: 16px;
-  outline: none;
-  transition: 0.3s;
-}
-
-.search-box input:focus{
-  border: 1px solid rgba(107, 168, 255, 0.45);
-  box-shadow: 0 0 0 4px rgba(107, 168, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.clear-btn{
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.clear-btn:hover{
-  color: black;
-}
-
-#search::placeholder{
-  transition: 0.2s;
-}
-
-.typing-cursor::placeholder{
-  color: #666;
-}
-
-.typing-cursor{
-  caret-color: transparent;
-}
-
-/* ===== RESULT PANEL ===== */
-.result-panel{
-  flex: 1;
-  background: rgba(0, 0, 0, 0.18);
-  border-radius: 20px;
-  margin-top: 15px;
-  height: 100%;
-  transition: 0.3s;
-  padding: 20px;
-  overflow-y: auto;
-  display: block;
-}
-
-/* ===== RESULT CARDS ===== */
-.result-card{
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 18px;
-  padding: 20px;
-  border-radius: 20px;
-  color: white;
-  line-height: 1.7;
-  transition: 0.3s;
-  backdrop-filter: blur(12px);
-}
-
-.result-card:hover{
-  transform: translateY(-6px);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.term{
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 14px;
-  background: linear-gradient(to right, #6ba8ff, #7ef0c7);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.item{
-  background: #4b4b57;
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 8px;
-}
-
-.item.primary{
-  border-left: 4px solid #4caf50;
-}
-
-.item.alt{
-  border-left: 4px solid #ffb300;
-}
-
-.item.bad{
-  border-left: 4px solid #f44336;
-}
-
-.notes-block{
-  margin-top:12px;
-  color:#ddd;
-}
-
-.related{
-  margin-top:10px;
-}
-
-.related-item{
-  color:#4da3ff;
-  cursor:pointer;
-  margin-right:8px;
-}
-
-.related-item:hover{
-  text-decoration:underline;
-}
-
-.section-title{
-  font-size:12px;
-  opacity:0.7;
-  margin-bottom:5px;
-}
-
-.highlight{
-  background:#ffd166;
-  color:black;
-  padding:2px 4px;
-  border-radius:4px;
-}
-
-/* ===== SUGGESTIONS ===== */
-.suggestion-item{
-  background:#4b4b57;
-  color:white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  cursor: pointer;
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.suggestion-item b{
-  font-size: 14px;
-}
-
-.suggestion-item small{
-  opacity: 0.7;
-}
-
-.suggestion-item:hover{
-  background:#5a5a68;
-}
-
-/* ===== FOOTER ===== */
-.footer{
-  text-align: center;
-  font-size: 12px;
-  color: #ccc;
-  margin-top: 10px;
-}
-
-/* ===== UU LAYOUT ===== */
-.uu-layout{
-  display: flex;
-  gap: 20px;
-}
-
-.uu-left{
-  flex: 2;
-}
-
-.uu-right{
-  flex: 1;
-}
-
-.uu-title{
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.relevansi-box{
-  background: #4b4b57;
-  padding: 15px;
-  border-radius: 12px;
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-}
-
-.relevansi-title{
-  font-size: 18px;
-  font-weight: bold;
-  color: #ffd166;
-  margin-bottom: 10px;
-}
-
-/* ===== READING LAYOUT ===== */
-.reading-layout{
-  display: flex;
-  gap: 20px;
-}
-
-.reading-left{
-  flex: 1;
-}
-
-.reading-right{
-  flex: 1;
-}
-
-@media(max-width: 900px){
-  .uu-layout,
-  .reading-layout{
-    flex-direction: column;
-  }
-}
-
-/* ===== ANIMATION (content fade) ===== */
-.fade{
-  animation: fadeUp 0.4s ease;
-}
-
-@keyframes fadeUp{
-  from{ opacity: 0; transform: translateY(20px); }
-  to{ opacity: 1; transform: translateY(0); }
-}
-
-.grid-bg{
-  position: fixed;
-  inset: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: -1;
-  mask-image: radial-gradient(circle at center, black 20%, transparent 90%);
-}
-  
-</style>
-</head>
-
-<body>
-
-<div class="grid-bg"></div>
-
-<div class="app">
-
-  <!-- ===== SIDEBAR ===== -->
-  <div class="sidebar">
-
-    <img src="logo.png" class="sidebar-logo">
-
-    <div class="nav-item active" onclick="switchFeature(event, 'term')">🔍 Terminologi</div>
-    <div class="nav-item" onclick="switchFeature(event, 'law')">📜 UU Internasional</div>
-    <div class="nav-item" onclick="switchFeature(event, 'case')">📂 Riwayat Kasus</div>
-    <div class="nav-item" onclick="switchFeature(event, 'reading')">📖 Daftar Bacaan</div>
-
-    <div class="contact">
-      Punya Kendala?<br>
-      0877-7155-5574 (Hadi)
-    </div>
-
-  </div>
-
-  <!-- ===== MAIN ===== -->
-  <div class="main">
-
-    <div class="mini-hero">
-      <div class="hero-overlay"></div>
-
-      <div class="hero-content">
-        <img src="logo.png" class="hero-logo left-logo">
-
-        <div class="hero-text">
-          LINTAS BAHASA HUKUM
-        </div>
-
-        <img src="logo-p.png" class="hero-logo right-logo">
-      </div>
-
-    </div>
-
-    <!-- HEADER -->
-    <div class="header">
-      <div class="marquee">
-        <span>DIREKTORAT JENDERAL PEMASYARAKATAN SULAWESI TENGGARA</span>
-      </div>
-    </div>
-
-    <!-- SEARCH -->
-    <div class="search-box" id="searchBox">
-      <input id="search" placeholder="Cari terminologi...">
-      <button class="clear-btn" onclick="clearMainSearch()">❌</button>
-    </div>
-
-    <div class="result-panel fade">
-
-      <div id="globalSuggestions"></div>
-
-      <div id="results"></div>
-      <div id="lawResults"></div>
-      <div id="caseResults"></div>
-      <div id="readingResults"></div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="footer">© LEX-KOMTRANS KANWILPAS</div>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
-
-<script>
-
-const typingTexts = {
-  term: [
-    "Cari terminologi...",
-    "Lapas",
-    "Pengamanan",
-    "Kemenimipas",
-    "Sekretariat Jenderal"
-  ],
-
-  law: [
-    "Cari hukum internasional...",
-    "Perdagangan Manusia",
-    "Korupsi",
-    "Pencurian"
-  ],
-
-  case: [
-    "Cari kasus...",
-    "Pelanggaran Pembebasan",
-    "Pemindahan Narapidana",
-    "Pemenuhan Hak Pelayanan"
-  ]
-};
-
-let typingInterval;
-let currentTextIndex = 0;
-let currentCharIndex = 0;
-let deleting = false;
-let typingSession = 0;
-
-async function startTypingEffect(feature){
-
-  // CREATE NEW SESSION
-  typingSession++;
-
-  const session = typingSession;
-  const input = document.getElementById("search");
-
-  if(!typingTexts[feature]) return;
-
-  const texts = typingTexts[feature];
-  let textIndex = 0;
-  input.classList.add("typing-cursor");
-
-  while(currentFeature === feature && session === typingSession){
-    let text = texts[textIndex];
-
-    // ================
-    // TYPING
-    // ================
-    for(let i = 0; i <= text.length; i++){
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Lexantara - Law Terminology Finder</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root{
+                --bg: #071018;
+                --bg2: #0d1721;
+                --card: rgba(255, 255, 255, 0.06);
+                --border: rgba(255, 255, 255, 0.08);
+                --text:#f5f7fb;
+                --muted:#98a7bb;
+                --primary:#6ba8ff;
+                --primary2:#7ef0c7;
+                --shadow:0 10px 40px rgba(0,0,0,0.35);
+            }
+
+            body{
+                font-family:'Inter',sans-serif;
+                background:linear-gradient(135deg, #071018, #0d1721, #122232);
+                color:var(--text);
+                overflow-x:hidden;
+                min-height:100vh;
+                position:relative;
+            }
+
+            body::before{
+                content:'';
+                position:fixed;
+                width:700px;
+                height:700px;
+                background:radial-gradient(circle, rgba(107,168,255,0.18), transparent 70%);
+                top:-250px;
+                left:-250px;
+                z-index:-2;
+                animation:floatBlob 10s ease-in-out infinite;
+            }
+
+            body::after{
+                content:'';
+                position:fixed;
+                width:600px;
+                height:600px;
+                background:radial-gradient(circle, rgba(126,240,199,0.12), transparent 70%);
+                bottom:-250px;
+                right:-250px;
+                z-index:-2;
+                animation:floatBlob2 12s ease-in-out infinite;
+            }
+
+            @keyframes floatBlob{
+                0%{transform:translate(0,0);}
+                50%{transform:translate(40px,40px);}
+                100%{transform:translate(0,0);}
+            }
+
+            @keyframes floatBlob2{
+                0%{transform:translate(0,0);}
+                50%{transform:translate(-40px,-20px);}
+                100%{transform:translate(0,0);}
+            }
+
+            .grid-bg{
+                position:fixed;
+                inset:0;
+                background-image:
+                    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+                background-size:40px 40px;
+                z-index:-3;
+                mask-image:radial-gradient(circle at center, black 20%, transparent 90%);
+            }
+
+            nav{
+                width:100%;
+                padding:24px 8%;
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            }
+
+            .logo{
+                font-family:'Poppins',sans-serif;
+                font-size:1.4rem;
+                font-weight:700;
+                letter-spacing:1px;
+            }
+
+            .logo span{
+                color:var(--primary2);
+            }
+
+            .nav-brand{
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .top-logo{
+                width: 52px;
+                height: 52px;
+                object-fit: contain;
+            }
+
+            .brand-text{
+                font-size: 1.2rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+            }
+
+            .nav-links{
+                display:flex;
+                gap:28px;
+                color:var(--muted);
+                font-size:0.95rem;
+            }
+
+            .nav-links div{
+                cursor:pointer;
+                transition:0.3s;
+            }
+
+            .nav-links div:hover{
+                color:white;
+            }
+
+            .hero{
+                width:100%;
+                min-height:88vh;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+                text-align:center;
+                padding:0 20px;
+            }
+
+            .hero-badge{
+                background:rgba(255,255,255,0.06);
+                border:1px solid var(--border);
+                padding:10px 18px;
+                border-radius:999px;
+                color:var(--primary2);
+                margin-bottom:24px;
+                backdrop-filter:blur(12px);
+                animation:fadeUp 1s ease;
+            }
+
+            .hero h1{
+                font-family:'Poppins',sans-serif;
+                font-size:4rem;
+                max-width:900px;
+                line-height:1.1;
+                margin-bottom:24px;
+                animation:fadeUp 1s ease;
+            }
+
+            .hero h1 span{
+                background:linear-gradient(to right, var(--primary), var(--primary2));
+                -webkit-background-clip:text;
+                -webkit-text-fill-color:transparent;
+            }
+
+            .hero p{
+                color:var(--muted);
+                font-size:1.1rem;
+                max-width:700px;
+                line-height:1.8;
+                margin-bottom:40px;
+                animation:fadeUp 1.2s ease;
+            }
+
+            .search-container{
+                width:100%;
+                max-width:850px;
+                position:relative;
+                animation:fadeUp 1.4s ease;
+            }
+
+            .search-box{
+                width:100%;
+                padding:24px 28px;
+                border-radius:24px;
+                border:1px solid rgba(255,255,255,0.1);
+                background:rgba(255,255,255,0.06);
+                backdrop-filter:blur(14px);
+                color:white;
+                font-size:1rem;
+                outline:none;
+                transition:0.4s;
+                box-shadow:var(--shadow);
+            }
+
+            .search-box:focus{
+                border:1px solid rgba(107,168,255,0.5);
+                box-shadow: 0 0 0 4px rgba(107,168,255,0.1), 0 20px 60px rgba(0,0,0,0.4);
+            }
+
+            .typing-placeholder{
+                position:absolute;
+                left:28px;
+                top:50%;
+                transform:translateY(-50%);
+                color:#7d8ea3;
+                pointer-events:none;
+                font-size:1rem;
+            }
+
+            .cursor{
+                animation:blink 1s infinite;
+            }
+
+            @keyframes blink{
+                50%{
+                    opacity:0;
+                }
+            }
+
+            .categories{
+                margin-top:34px;
+                display:flex;
+                flex-wrap:wrap;
+                justify-content:center;
+                gap:14px;
+            }
+
+            .chip{
+                padding:12px 18px;
+                border-radius:999px;
+                background:rgba(255,255,255,0.05);
+                border:1px solid rgba(255,255,255,0.06);
+                color:#cdd6e4;
+                font-size:0.92rem;
+                transition:0.3s;
+                cursor:pointer;
+            }
+
+            .active-chip{
+                background: linear-gradient(to right, rgba(107, 168, 255, 0.25), rgba(126, 240, 199, 0.18));
+                border: 1px solid rgba(107, 168, 255, 0.4);
+                color: white;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+
+            .chip:hover{
+                transform:translateY(-4px);
+                background:rgba(255,255,255,0.09);
+                color:white;
+            }
+
+            .section{
+                width:100%;
+                padding:100px 8%;
+            }
+
+            .section-title{
+                font-size:2rem;
+                font-weight:800;
+                margin-bottom:14px;
+            }
+
+            .section-subtitle{
+                color:var(--muted);
+                margin-bottom:50px;
+                line-height:1.7;
+            }
+
+            .cards{
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+                gap:28px;
+            }
+
+            .card{
+                background:rgba(255,255,255,0.05);
+                border:1px solid rgba(255,255,255,0.08);
+                border-radius:28px;
+                padding:28px;
+                backdrop-filter:blur(16px);
+                transition:0.4s ease;
+                position:relative;
+                overflow:hidden;
+            }
+
+            .card::before{
+                content:'';
+                position:absolute;
+                inset:0;
+                background:linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+                transform:translateX(-100%);
+                transition:0.8s;
+            }
+
+            .card:hover::before{
+                transform:translateX(100%);
+            }
+
+            .card:hover{
+                transform:translateY(-10px);
+                border:1px solid rgba(107,168,255,0.25);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            }
+
+            .card-tag{
+                display:inline-block;
+                margin-bottom:16px;
+                background:rgba(107,168,255,0.15);
+                color:#9bc3ff;
+                padding:8px 14px;
+                border-radius:999px;
+                font-size:0.82rem;
+            }
+
+            .card h3{
+                font-size:1.5rem;
+                margin-bottom:14px;
+            }
+
+            .card p{
+                color:#b2bfd0;
+                line-height:1.8;
+            }
+
+            .results-wrapper{
+                width: 100%;
+                max-width: 900px;
+                margin-top: 40px;
+            }
+
+            .footer{
+                padding:60px 8%;
+                border-top:1px solid rgba(255,255,255,0.06);
+                display:flex;
+                justify-content:space-between;
+                flex-wrap:wrap;
+                gap:20px;
+                color:var(--muted);
+            }
+
+            @keyframes fadeUp{
+                from{
+                    opacity:0;
+                    transform:translateY(30px);
+                }
+
+                to{
+                    opacity:1;
+                    transform:translateY(0);
+                }
+            }
+
+            @media(max-width:768px){
+
+                .hero h1{
+                    font-size:2.6rem;
+                }
+
+                .nav-links{
+                    display:none;
+                }
+
+                .search-box{
+                    padding:22px;
+                }
+
+                .section{
+                    padding:80px 6%;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div class="grid-bg"></div>
+        
+        <nav>
+
+            <div class="nav-brand">
+                <img src="logo.png" class="top-logo">
+                <div class="brand-text">
+                    DIREKTORAT JENDERAL PEMASYARAKATAN SULAWESI TENGGARA
+                </div>
+            </div>
+        
+        </nav>
+
+        <section class="hero">
+
+            <div class="hero-badge">
+                ⚖️ Smart Legal Terminology Platform
+            </div>
+
+            <h1>
+                Temukan <span>Terminologi Hukum</span> Dengan Cepat dan Modern
+            </h1>
+
+            <p>
+                Platform pencarian istilah hukum dengan pengalaman modern,
+                pencarian interaktif, serta penjelasan terminologi yang
+                lebih mudah dipahami.
+            </p>
+
+            <div class="search-container" id="search-box">
+
+                <input class="search-box" type="text" id="search">
+            
+            </div>
+
+            <div class="categories">
+                <div class="chip active-chip" onclick="switchFeature(event, 'term')">🔍 Terminologi</div>
+                <div class="chip" onclick="switchFeature(event, 'law')">📜 UU Internasional</div>
+                <div class="chip" onclick="switchFeature(event, 'case')">📂 Riwayat Kasus</div>
+                <div class="chip" onclick="switchFeature(event, 'reading')">📖 Daftar Bacaan</div>
+            </div>
+
+            <div class="results-wrapper">
+                <div id="globalSuggestions"></div>
+                <div id="results"></div>
+                <div id="lawResults"></div>
+                <div id="caseResults"></div>
+                <div id="readingResults"></div>
+            </div>
+        
+        </section>
+
+        <section class="section">
+            <div class="section-title">
+                Featured Legal Terms
+            </div>
+
+            <div class="section-subtitle">
+                Istilah hukum populer yang sering digunakan dalam dunia akademik maupun praktik hukum.
+            </div>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-tag">
+                        Criminal Law
+                    </div>
+
+                    <h3>Mens Rea</h3>
+
+                    <p>
+                        Unsur kesalahan batin atau niat pelaku dalam melakukan tindak pidana.
+                    </p>
+
+                </div>
+
+                <div class="card">
+                    <div class="card-tag">
+                        Latin Terminology
+                    </div>
+
+                    <h3>Actus Reus</h3>
+
+                    <p>
+                        Tindakan fisik atau perbuatan nyata yang menjadi unsur terjadinya tindak pidana.
+                    </p>
+
+                </div>
+
+                <div class="card">
+                    <div class="card-tag">
+                        Constitutional Law
+                    </div>
+
+                    <h3>Judicial Review</h3>
+
+                    <p>
+                        Kewenangan lembaga peradilan untuk menguji kesesuaian peraturan terhadap konstitusi.
+                    </p>
+
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div>
+                © 2026 LEX-KOMTRANS KANWILPAS
+            </div>
+
+            <div>
+                Designed with modern legal-tech aesthetic
+            </div>
+        </footer>
+
+        <script src="script.js"></script>
+
+        <script>
+            const typingTexts = {
+                term: [
+                    "Cari terminologi...",
+                    "Lapas",
+                    "Pengamanan",
+                    "Kemenimipas",
+                    "Sekretariat Jenderal"
+                ],
+
+                law: [
+                    "Cari hukum internasional...",
+                    "Perdagangan Manusia",
+                    "Korupsi",
+                    "Pencurian"
+                ],
+
+                case: [
+                    "Cari kasus...",
+                    "Pelanggaran Pembebasan",
+                    "Pemindahan Narapidana",
+                    "Pemenuhan Hak Pelayanan"
+                ]
+            };
+
+            let typingInterval;
+            let currentTextIndex = 0;
+            let currentCharIndex = 0;
+            let deleting = false;
+            let typingSession = 0;
+
+            async function startTypingEffect(feature){
+
+                // CREATE NEW SESSION
+                typingSession++;
+
+                const session = typingSession;
+                const input = document.getElementById("search");
+
+                if(!typingTexts[feature]) return;
+
+                const texts = typingTexts[feature];
+                let textIndex = 0;
+                input.classList.add("typing-cursor");
+
+                while(currentFeature === feature && session === typingSession){
+                    let text = texts[textIndex];
+
+                    // ================
+                    // TYPING
+                    // ================
+                    for(let i = 0; i <= text.length; i++){
       
-      // STOP OLD SESSION
-      if(session !== typingSession) return;
+                        // STOP OLD SESSION
+                        if(session !== typingSession) return;
 
-      // STOP if user types
-      if(input.value.length > 0){
-        return;
-      }
+                        // STOP if user types
+                        if(input.value.length > 0){
+                            return;
+                        }
 
-      input.placeholder = text.substring(0, i) + "|";
-      await sleep(90);
-    }
+                        input.placeholder = text.substring(0, i) + "|";
+                        await sleep(90);
+                    }
 
-    // ================
-    // WAIT 2 SECONDS
-    // ================
-    await sleep(2000);
+                    // ================
+                    // WAIT 2 SECONDS
+                    // ================
+                    await sleep(2000);
 
-    // SESSION CHECK
-    if(session !== typingSession) return;
+                    // SESSION CHECK
+                    if(session !== typingSession) return;
 
-    // ================
-    // DELETING
-    // ================
-    for(let i = text.length; i >= 0; i--){
+                    // ================
+                    // DELETING
+                    // ================
+                    for(let i = text.length; i >= 0; i--){
 
-      // STOP OLD SESSION
-      if(session !== typingSession) return;
+                        // STOP OLD SESSION
+                        if(session !== typingSession) return;
 
-      // Stop if user types
-      if(input.value.length > 0){
-        return;
-      }
+                        // Stop if user types
+                        if(input.value.length > 0){
+                            return;
+                        }
 
-      input.placeholder = text.substring(0, i) + "|";
-      await sleep(50);
-    }
+                        input.placeholder = text.substring(0, i) + "|";
+                        await sleep(50);
+                    }
 
-    // NEXT TEXT
-    textIndex++;
+                    // NEXT TEXT
+                    textIndex++;
 
-    if(textIndex >= texts.length){
-      textIndex = 0;
-    }
-  }
-}
+                    if(textIndex >= texts.length){
+                        textIndex = 0;
+                    }
+                }
+            }
 
-function sleep(ms){
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+            function sleep(ms){
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
 
-/* ===== FEATURE SWITCHER ===== */
-let currentFeature = "term";
+            /* ===== FEATURE SWITCHER ===== */
+            let currentFeature = "term";
 
-function switchFeature(event, feature){
+            function switchFeature(event, feature){
 
-  currentFeature = feature;
+                currentFeature = feature;
 
-  // ACTIVE SIDEBAR
-  document.querySelectorAll('.nav-item').forEach(el=>{
-    el.classList.remove('active');
-  });
+                // ACTIVE SIDEBAR
+                document.querySelectorAll('.chip').forEach(el=>{
+                    el.classList.remove('active-chip');
+                });
 
-  event.currentTarget.classList.add('active');
+                event.currentTarget.classList.add('active-chip');
 
-  // ELEMENTS
-  const searchBox = document.getElementById("searchBox");
-  const mainInput = document.getElementById("search");
-  const suggestions = document.getElementById("globalSuggestions");
+                // ELEMENTS
+                const searchBox = document.getElementById("searchBox");
+                const mainInput = document.getElementById("search");
+                const suggestions = document.getElementById("globalSuggestions");
 
-  // RESET SEARCH
-  mainInput.value = "";
-  mainInput.placeholder = "";
+                // RESET SEARCH
+                mainInput.value = "";
+                mainInput.placeholder = "";
 
-  // CLEAR UI
-  clearSuggestions("globalSuggestions");
+                // CLEAR UI
+                clearSuggestions("globalSuggestions");
 
-  clearResults("results");
-  clearResults("lawResults");
-  clearResults("caseResults");
-  clearResults("readingResults");
+                clearResults("results");
+                clearResults("lawResults");
+                clearResults("caseResults");
+                clearResults("readingResults");
 
-  // HIDE ALL RESULT SECTIONS
-  document.getElementById("results").style.display = "none";
-  document.getElementById("lawResults").style.display = "none";
-  document.getElementById("caseResults").style.display = "none";
-  document.getElementById("readingResults").style.display = "none";
+                // HIDE ALL RESULT SECTIONS
+                document.getElementById("results").style.display = "none";
+                document.getElementById("lawResults").style.display = "none";
+                document.getElementById("caseResults").style.display = "none";
+                document.getElementById("readingResults").style.display = "none";
 
-  // REMOVE OLD EVENTS
-  mainInput.oninput = null;
-  mainInput.onkeydown = null;
+                // REMOVE OLD EVENTS
+                mainInput.oninput = null;
+                mainInput.onkeydown = null;
 
-  // ===== TERMINOLOGI =====
-  if(feature === "term"){
-    startTypingEffect("term");
-    searchBox.style.display = "block";
-    mainInput.placeholder = "Cari terminologi...";
-    document.getElementById("results").style.display = "block";
+                // ===== TERMINOLOGI =====
+                if(feature === "term"){
+                    startTypingEffect("term");
+                    searchBox.style.display = "block";
+                    mainInput.placeholder = "Cari terminologi...";
+                    document.getElementById("results").style.display = "block";
 
-    mainInput.oninput = function(){
-      let query = this.value.trim().toLowerCase();
+                    mainInput.oninput = function(){
+                        let query = this.value.trim().toLowerCase();
 
-      suggestions.style.display = "block";
+                        suggestions.style.display = "block";
 
-      if(query === ""){
-        showHistory();
-        clearSuggestions("globalSuggestions");
-        return;
-      }
+                        if(query === ""){
+                        showHistory();
+                        clearSuggestions("globalSuggestions");
+                        return;
+                        }
 
-      let results = filterTerms(query);
+                        let results = filterTerms(query);
 
-      updateHistory(results);
-      renderSuggestions(results, "globalSuggestions", "selectSuggestion");
-    };
+                        updateHistory(results);
+                        renderSuggestions(results, "globalSuggestions", "selectSuggestion");
+                    };
 
-    mainInput.onkeydown = function(e){
-      if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterTerms(query);
-        clearSuggestions("globalSuggestions");
-        renderResults(results, query);
-      }
-    };
-  }
+                    mainInput.onkeydown = function(e){
+                        if(e.key === "Enter"){
+                            let query = this.value.trim().toLowerCase();
+                            let results = filterTerms(query);
+                            clearSuggestions("globalSuggestions");
+                            renderResults(results, query);
+                        }
+                    };
+                }
 
-  // ===== LAW =====
-  else if(feature === "law"){
-    startTypingEffect("law");
-    searchBox.style.display = "block";
-    mainInput.placeholder = "Cari hukum internasional...";
-    document.getElementById("lawResults").style.display = "block";
+                // ===== LAW =====
+                else if(feature === "law"){
+                    startTypingEffect("law");
+                    searchBox.style.display = "block";
+                    mainInput.placeholder = "Cari hukum internasional...";
+                    document.getElementById("lawResults").style.display = "block";
 
-    mainInput.oninput = function(){
-      let query = this.value.trim().toLowerCase();
+                    mainInput.oninput = function(){
+                        let query = this.value.trim().toLowerCase();
 
-      suggestions.style.display = "block";
+                        suggestions.style.display = "block";
 
-      if(query.length < 3){
-        clearResults("lawResults");
-        clearSuggestions("globalSuggestions");
-        return;
-      }
+                        if(query.length < 3){
+                            clearResults("lawResults");
+                            clearSuggestions("globalSuggestions");
+                            return;
+                        }
 
-      let results = filterUU(query);
+                        let results = filterUU(query);
 
-      renderSuggestions(results, "globalSuggestions", "selectLaw", "law");
-    };
+                        renderSuggestions(results, "globalSuggestions", "selectLaw", "law");
+                    };
 
-    mainInput.onkeydown = function(e){
-      if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterUU(query);
-        clearSuggestions("globalSuggestions");
-        renderUU(results);
-      }
-    };
-  }
+                    mainInput.onkeydown = function(e){
+                        if(e.key === "Enter"){
+                            let query = this.value.trim().toLowerCase();
+                            let results = filterUU(query);
+                            clearSuggestions("globalSuggestions");
+                            renderUU(results);
+                        }
+                    };
+                }
 
-  // ===== CASE =====
-  else if(feature === "case"){
-    startTypingEffect("case");
-    searchBox.style.display = "block";
-    mainInput.placeholder = "Cari kasus...";
-    document.getElementById("caseResults").style.display = "block";
+                // ===== CASE =====
+                else if(feature === "case"){
+                    startTypingEffect("case");
+                    searchBox.style.display = "block";
+                    mainInput.placeholder = "Cari kasus...";
+                    document.getElementById("caseResults").style.display = "block";
 
-    mainInput.oninput = function(){
-      let query = this.value.trim().toLowerCase();
+                    mainInput.oninput = function(){
+                        let query = this.value.trim().toLowerCase();
 
-      suggestions.style.display = "block";
+                        suggestions.style.display = "block";
 
-      if(query === ""){
-        clearResults("caseResults");
-        clearSuggestions("globalSuggestions");
-        return;
-      }
+                        if(query === ""){
+                            clearResults("caseResults");
+                            clearSuggestions("globalSuggestions");
+                            return;
+                        }
 
-      let results = filterCases(query);
+                        let results = filterCases(query);
 
-      renderSuggestions(results, "globalSuggestions", "selectCase", "case");
-    };
+                        renderSuggestions(results, "globalSuggestions", "selectCase", "case");
+                    };
 
-    mainInput.onkeydown = function(e){
-      if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterCases(query);
-        clearSuggestions("globalSuggestions");
-        renderCases(results);
-      }
-    };
-  }
+                    mainInput.onkeydown = function(e){
+                        if(e.key === "Enter"){
+                            let query = this.value.trim().toLowerCase();
+                            let results = filterCases(query);
+                            clearSuggestions("globalSuggestions");
+                            renderCases(results);
+                        }
+                    };
+                }
 
-  // ===== READING =====
-  else if(feature === "reading"){
-    typingSession++;
-    searchBox.style.display = "none";
-    document.getElementById("readingResults").style.display = "block";
-    renderReading();
-  }
-}
+                // ===== READING =====
+                else if(feature === "reading"){
+                    typingSession++;
+                    searchBox.style.display = "none";
+                    document.getElementById("readingResults").style.display = "block";
+                    renderReading();
+                }
+            }
 
-function clearMainSearch(){
-  const input = document.getElementById("search");
-  input.value = "";
+            function clearMainSearch(){
+                const input = document.getElementById("search");
+                input.value = "";
 
-  clearSuggestions("globalSuggestions");
+                clearSuggestions("globalSuggestions");
 
-  clearResults("results");
-  clearResults("lawResults");
-  clearResults("caseResults");
+                clearResults("results");
+                clearResults("lawResults");
+                clearResults("caseResults");
 
-  if(currentFeature === "term"){
-    showHistory();
-  }
+                if(currentFeature === "term"){
+                    showHistory();
+                }
 
-  input.focus();
-}
+                input.focus();
+            }
 
-</script>
+            startTypingEffect();
 
-</body>
+        </script>
+    </body>
 </html>
