@@ -307,34 +307,33 @@ function renderUU(results){
         r.uu_internasional.forEach(u => {
 
             html += `
+
             <div class="result-panel">
 
                 <div class="result-title">${u.nama_konvensi}</div>
-                <div class="result-grid">
+                
+                <div class="reading-layout">
 
                     <!-- LEFT -->
-                    <div class="result-section">
+                    <div class="reading-side">
 
-                        <div class="section-heading">
-                            Articles
+                        <div class="reading-side-title">
+                            📜 Articles
                         </div>
             `;
 
             u.articles.forEach(article => {
 
                 html += `
+
                 <div class="article-card">
 
-                    <div class="article-title">
+                    <div class="article-heading">
                         ${article.article}
                     </div>
 
                     <div class="article-content">
                         ${article.isi}
-                    </div>
-
-                    <div class="article-translation">
-                        ${article.terjemahan}
                     </div>
 
                 </div>
@@ -345,15 +344,32 @@ function renderUU(results){
                     </div>
 
                     <!-- RIGHT -->
-                    <div class="result-section">
-
-                        <div class="section-heading">Relevansi</div>
-                        <div class="relevansi-box">${u.relevansi}</div>
-
+                    <div class="reading-side">
+                        <div class="reading-side-title">🌎 Translation</div>
                     </div>
 
-                </div>
+            `;
 
+            u.articles.forEach(article => {
+
+                html += `
+                
+                    <div class="translation-box">
+                        ${article.terjemahan}
+                    </div>
+                `;
+            });
+
+            html += `
+                        <div class="relevansi-box">
+                            <strong>Relevansi:</strong>
+                            
+                            <br><br>
+                            
+                            ${u.relevansi}
+                        </div>
+                    </div>
+                </div>
             </div>
             `;
         });
@@ -371,36 +387,51 @@ function renderCases(results){
 
             <div class="result-title">${c.judul}</div>
 
-            <div class="case-grid">
+            <div class="reading-layout">
 
-                <div class="result-section">
+                <!-- LEFT -->
+                <div class="reading-side">
 
-                    <div class="section-heading">Kategori</div>
+                    <div class="reading-side-title">📂 Kategori</div>
 
-                    <div class="notes-box">
-        `;
-
-        c.kategori.forEach(k => {
-            html += `<div class="note-item">• ${k}</div>`;
-        });
-
-        html += `
+                    <div class="reading-content">
+                        ${
+                            Array.isArray(c.kategori) ? c.kategori.join("<br>") : c.kategori
+                        }
                     </div>
 
-                    <div class="section-heading">Kesimpulan</div>
-                    <div class="notes-box">${c.kesimpulan}</div>
-                
+                    <br><br>
+
+                    <div class="reading-side-title">
+                        📜 Kesimpulan
+                    </div>
+
+                    <div class="reading-content">
+                        ${c.kesimpulan}
+                    </div>
                 </div>
 
-                <div class="result-section">
-                    <div class="section-heading">Hasil</div>
-                    <div class="notes-box">${c.hasil}</div>
-                    <div class="section-heading">Alasan Legal</div>
-                    <div class="notes-box">${c.alasan_legal}</div>
-                </div>
+                <!-- RIGHT -->
+                <div class="reading-side">
+                    <div class="reading-side-title">
+                        ⚖️ Hasil
+                    </div>
 
+                    <div class="reading-content">
+                        ${c.hasil}
+                    </div>
+
+                    <br><br>
+
+                    <div class="reading-side-title">
+                        🏛️ Alasan Legal
+                    </div>
+
+                    <div class="reading-content">
+                        ${c.alasan_legal}
+                    </div>
+                </div>
             </div>
-
         </div>
         `;
     });
@@ -422,24 +453,27 @@ function renderReading(){
 
             <div class="result-title">${r.judul}</div>
 
-            <div class="reading-grid">
+            <div class="reading-layout">
 
                 <!-- LEFT -->
-                <div class="result-section">
+                <div class="reading-side">
 
-                    <div class="section-heading">English Source</div>
+                    <div class="reading-side-title">📂 English Source</div>
 
-                    <div class="meta-box">
-                        <div><b>Kategori:</b>${r.kategori}</div>
-                        <a href="${r.link}" target="_blank" class="file-link">📂 English File</a>
+                    <div class="reading-category">
+                        <strong>Kategori:</strong>
+                        <br><br>
+                        ${r.kategori}
                     </div>
+
+                    <a href="${r.link}" target="_blank" class="reading-link">📂 Open English File</a>
 
                 </div>
 
                 <!-- RIGHT -->
-                <div class="result-section">
-                    <div class="section-heading">Ringkasan Indonesia</div>
-                    <div class="notes-box">${r.kesimpulan}</div>
+                <div class="reading-side">
+                    <div class="reading-side-title">Ringkasan Indonesia</div>
+                    <div class="reading-content">${r.kesimpulan}</div>
                 </div>
 
             </div>
