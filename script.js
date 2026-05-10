@@ -11,15 +11,17 @@ let database = [];
 let uuDatabase = [];
 let caseDatabase = [];
 let readingDatabase = [];
+
 let currentPage = 1;
 const itemsPerPage = 5;
+
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 
 // =====================
 // LOAD DATA
 // =====================
-async function loadTerms(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/term-db`, {
+async function fetchTable(table){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
         method: "GET",
         headers: {
             "apikey": SUPABASE_KEY,
@@ -29,235 +31,272 @@ async function loadTerms(){
     });
 
     if(!res.ok){
-        console.error("Error loading terms");
+        console.error(`Failed loading ${table}`);
         return;
     }
 
-    database = await res.json();
+    return await res.json();
+}
+
+async function initialize(){
+    database = await fetchTable( "term-db" );
+    uuDatabase = await fetchTable( "uu_internasional" );
+    caseDatabase = await fetchTable( "case_db" );
+    readingDatabase = await fetchTable( "reading-db" );
     showHistory();
 }
 
-async function loadUU(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/uu_internasional`, {
-        method: "GET",
-        headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
-        }
-    });
-
-    if(!res.ok){
-        console.error("Error loading UU");
-        return;
-    }
-
-    uuDatabase = await res.json();
-}
-
-async function loadCases(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/case_db`, {
-        method: "GET",
-        headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
-        }
-    });
-
-    if(!res.ok){
-        console.error("Error loading cases");
-        return;
-    }
-
-    caseDatabase = await res.json();
-}
-
-async function loadReading(){
-    let res = await fetch(`${SUPABASE_URL}/rest/v1/reading-db`, {
-        method: "GET",
-        headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json"
-        }
-    });
-    
-    if(!res.ok){
-        console.error("Error loading reading");
-        return;
-    }
-
-    readingDatabase = await res.json();
-}
-
-loadTerms();
-loadUU();
-loadCases();
-loadReading();
+initialize();
 
 // ====================
-// SEARCH (TERMS)
+// HELPERS
 // ====================
-document.getElementById("search").addEventListener("input", function(){
-    let query = this.value.trim().toLowerCase();
-    document.getElementById("globalSuggestions").style.display = "block";
-    
-    if(query === ""){
-        showHistory();
-        clearSuggestions("globalSuggestions");
-        return;
-    }
-    
-    let results = filterTerms(query);
+function qs(id){
+    return document.getElementById(id);
+}
 
-    updateHistory(results);
-    renderSuggestions(results, "globalSuggestions", "selectSuggestion");
-});
+function clearResults(id){
+    qs(id).innerHTML = "";
+}
 
-document.getElementById("search").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let query = this.value.trim().toLowerCase();
-        let results = filterTerms(query);
+function clearAllResults(){
+    clearResults("results");
+    clearResults("lawResults");
+    clearResults("caseResults");
+    clearResults("readingResults");
+}
 
-        clearSuggestions("globalSuggestions");
-        renderResults(results, query);
-    }
-});
+function escapeHTML(str=""){
+    return str
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+}
+
+function highlight(text="", query=""){
+    if(!query) return text;
+    const regex = new RegExp(
+        `(${query})`,
+        "gi"
+    );
+
+    return text.replace(
+        regex,
+        `<span class="highlight">$1</span>`
+    );
+}
 
 // ====================
-// FILTER LOGIC
+// SEARCH FILTERS
 // ====================
 function filterTerms(query){
     query = query.toLowerCase();
     
     return database.filter(item => {
-        
-        let idMatch = item.term_id?.toLowerCase().includes(query);
 
-        let indoMatch = item.indonesian?.toLowerCase().includes(query);
+        const indo = item.indonesian?.toLowerCase().includes(query);
+        const primary = item.translations?.primary?.term?.toLowerCase().includes(query);
+        const alternatives = item.translations?.alternatives || [];
 
-        let primaryMatch = item.translations?.primary?.term?.toLowerCase().includes(query);
-
-        let alternatives = Array.isArray(item.translations?.alternatives) ? item.translations.alternatives : [];
-
-        let altMatch = alternatives.some(a =>
+        const alt = alternatives.some(a =>
             a.term?.toLowerCase().includes(query)
         );
 
-        return idMatch || indoMatch || primaryMatch || altMatch;
+        return indo || primary || alt;
     });
 }
 
 function filterUU(query){
     query = query.toLowerCase();
 
-    return uuDatabase.filter(item => {
-        let kataKunciMatch = item.kata_kunci.toLowerCase().includes(query);
-
-        return kataKunciMatch;
-    });
+    return uuDatabase.filter(item => item.kata_kunci?.toLowerCase().includes(query));
 }
 
 function filterCases(query){
     query = query.toLowerCase();
 
     return caseDatabase.filter(item => {
-        let judulMatch = item.judul.toLowerCase().includes(query) || item.kategori.toLowerCase().includes(query);
+        const titleMatch = item.judul?.toLowerCase().includes(query);
 
-        return judulMatch;
+        const kategoriMatch = Array.isArray(item.kategori) && item.kategori.some(k =>
+            k.toLowerCase().includes(query)
+        );
+
+        return titleMatch || kategoriMatch;
     });
 }
 
-// ===================
-// HIGHLIGHT
-// ===================
-function highlight(text, query){
-    if(!query) return text;
+// ==================
+// HISTORY
+// ==================
+function updateHistory(term){
+    if(!term) return;
 
-    let regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, `<span class="highlight">$1</span>`);
+    searchHistory = searchHistory.filter(t => t !== term);
+    searchHistory.unshift(term);
+    searchHistory = searchHistory.slice(0,5);
+    localStorage.setItem("history", JSON.stringify(searchHistory));
+}
+
+function showHistory(){
+    if(typeof currentFeature !== "undefined" && currentFeature !== "term") return;
+
+    let html = "";
+    
+    searchHistory.forEach(term => {
+        html += `<div class="history-item" onclick="searchRelated(${JSON.stringify(term)})">🕘 ${term}</div>`;
+    });
+
+    qs("results").innerHTML = html;
 }
 
 // ===================
-// RENDER RESULTS
+// TERMINOLOGY RESULTS
 // ===================
 function renderResults(results, query=""){
+
+    if(results.length === 0){
+        qs("results").innerHTML = `
+        <div class="empty-state">
+
+            Tidak ada terminologi ditemukan.
+
+        </div>
+        `;
+    
+        return;
+    }
+
     let html = "";
 
     results.forEach(r =>{
-        html += `<div class="result-card">`;
+        const primary = r.translations?.primary;
+        const alternatives = r.translations?.alternatives || [];
 
-        // TITLE
-        html += `<div class="term">${highlight(r.indonesian, query)}</div>`;
+        html += `
+        <div class="result-panel">
+            <div class="result-title">
+                ${highlight(r.indonesian, query)}
+            </div>
 
-        let t = r.translations;
+            <div class="result-grid">
+                <div class="result-section">
+                    <div class="section-heading">
+                        Primary
+                    </div>
+        `;
 
         // PRIMARY
-        if(t?.primary){
-            html += `<div class="section primary"><div class="section-title">Primary</div>`;
+        if(primary){
             html += `
-            <div class="item primary">
-                🟢 ${highlight(t.primary.term, query)}
-                <small>(${t.primary.context})</small>
-                <button onclick="speak('${t.primary.term}')" class="speak-btn">🔊</button>
-            </div>`;
+            <div class="term-item">
+
+                <div>
+                    <span class="dot green"></span>
+                    ${highlight(
+                        primary.term,
+                        query
+                    )}
+                    <small>
+                        (${primary.context})
+                    </small>
+                </div>
+
+                <button class="speak-btn" onclick="speak('${primary.term}')">🔊</button>
+
+            </div>
+            `;
         }
 
-        // ALTERNATIVES
-        if(t?.alternatives?.length){
-            html += `<div class="section alt"><div class="section-title">Alternatives</div>`;
-            t.alternatives.forEach(a=>{
-                html += `
-                <div class="item alt">
-                    🟡 ${highlight(a.term, query)}
-                    <small>(${a.context})</small>
-                    <button onclick="speak('${a.term}')" class="speak-btn">🔊</button>
-                </div>`;
-            });
-            html += `</div>`
-        }
+        html += `
+                </div>
 
-        // FORBIDDEN
-        if(t?.forbidden?.length){
-            html += `<div class="section bad"><div class="section-title">Hindari</div>`;
-            t.forbidden.forEach(f=>{
-                html += `
-                <div class="item bad">
-                    🔴 ${highlight(f.term, query)}
-                    <small>(${f.context})</small>
-                </div>`;
-            });
-            html += `</div>`
-        }
+                <div class="result-section">
+
+                    <div class="section-heading">
+                        Alternatives
+                    </div>
+        `;
+
+        alternatives.forEach(a => {
+
+            html += `
+            <div class="term-item">
+
+                <div>
+                    <span class="dot yellow"></span>
+                    ${highlight(
+                        a.term,
+                        query
+                    )}
+                    <small>
+                        (${a.context})
+                    </small>
+                </div>
+
+                <button class="speak-btn" onclick="speak('${a.term}')">🔊</button>
+
+            </div>
+            `;
+        });
+
+        html += `
+                </div>
+
+            </div>
+        `;
 
         // NOTES
         if(r.notes?.length){
-            html += `<div class="notes-block"><b>Notes</b>`;
-            r.notes.forEach(n=>{
-                html += `<div>• ${n}</div>`;
-            });
-            html += `</div>`;
-        }
+            html += `
+            <div class="notes-box">
+                <div class="section-heading">
+                    Notes
+                </div>
+            `;
 
-        // RELATED TERMS
-        if(r.related_terms?.length){
-            html += `<div class="related">🔗 `;
-
-            r.related_terms.forEach(term=>{
+            r.notes.forEach(note => {
                 html += `
-                    <span class="related-item"
-                        onclick="searchRelated('${term}')">
-                        ${term}
-                    </span>
+                <div class="note-item">
+                    • ${note}
+                </div>
                 `;
             });
 
             html += `</div>`;
         }
+
+        // RELATED TERMS
+        if(r.related_terms?.length){
+            html += `
+            <div class="related-box">
+                <div class="section-heading">
+                    Related Terms
+                </div>
+
+                <div class="related-list">
+            `;
+
+            r.related_terms.forEach(term => {
+                html += `
+                <div class="related-chip" onclick="searchRelated('${term}')">
+                    ${term}
+                </div>
+                `;
+            });
+
+            html += `
+                </div>
+
+            </div>
+            `;
+        }
+
+        html += `
+        </div>
+        `;
     });
 
-    document.getElementById("results").innerHTML = html;
+    qs("results").innerHTML = html;
 }
 
 function renderUU(results){
@@ -268,59 +307,48 @@ function renderUU(results){
         r.uu_internasional.forEach(u => {
 
             html += `
-            <div class="result-card uu-layout">
+            <div class="result-panel">
 
-                <!-- LEFT -->
-                <div class="uu-left">
+                <div class="result-title">${u.nama_konvensi}</div>
+                <div class="result-grid">
 
-                    <div class="term">
-                        ${r.kata_kunci}
-                    </div>
+                    <!-- LEFT -->
+                    <div class="result-section">
 
-                    <div class="uu-title">
-                        ${u.nama_konvensi}
-                    </div>
+                        <div class="section-heading">
+                            Articles
+                        </div>
             `;
 
-            u.articles.forEach(a => {
+            u.articles.forEach(article => {
 
                 html += `
-                <div class="item">
+                <div class="article-card">
 
-                    <b>${a.article}</b><br>
+                    <div class="article-title">
+                        ${article.article}
+                    </div>
 
-                    ${a.isi}<br><br>
+                    <div class="article-content">
+                        ${article.isi}
+                    </div>
 
-                    <small>${a.terjemahan}</small>
+                    <div class="article-translation">
+                        ${article.terjemahan}
+                    </div>
 
                 </div>
                 `;
             });
 
             html += `
-                    <div class="notes-block">
-                        <b>Kesimpulan:</b><br>
-                        ${u.kesimpulan}<br><br>
-
-                        <small>
-                            ${u.terjemahan_kesimpulan}
-                        </small>
                     </div>
 
-                </div>
+                    <!-- RIGHT -->
+                    <div class="result-section">
 
-                <!-- RIGHT -->
-                <div class="uu-right">
-
-                    <div class="relevansi-box">
-
-                        <div class="relevansi-title">
-                            Relevansi
-                        </div>
-
-                        <div class="relevansi-content">
-                            ${u.relevansi}
-                        </div>
+                        <div class="section-heading">Relevansi</div>
+                        <div class="relevansi-box">${u.relevansi}</div>
 
                     </div>
 
@@ -331,73 +359,44 @@ function renderUU(results){
         });
     });
 
-    document.getElementById("lawResults").innerHTML = html;
+    qs("lawResults").innerHTML = html;
 }
 
 function renderCases(results){
     let html = "";
 
     results.forEach(c => {
-        html += `<div class="result-card">`;
-        html += `<div class="term">${c.judul}</div>`;
-        html += `<div class="notes-block"><b>Kategori:</b><br>`;
-
-        c.kategori.forEach(u=>{
-            html += `• ${u}<br>`;
-        });
-        html += `</div>`;
-
-        html += `<div class="notes-block"><b>Kesimpulan:</b><br>${c.kesimpulan}</div>`;
-        html += `<div class="notes-block"><b>Hasil:</b><br>${c.hasil}</div>`;
-        html += `<div class="notes-block"><b>Alasan Legal:</b><br>${c.alasan_legal}</div>`;
-
-        html += `</div>`;
-    });
-
-    document.getElementById("caseResults").innerHTML = html;
-}
-
-function renderReading(){
-    let html = "";
-
-    let start = (currentPage - 1) * itemsPerPage;
-    let end = start + itemsPerPage;
-
-    let paginatedData = readingDatabase.slice(start, end);
-
-    paginatedData.forEach(r => {
         html += `
-        <div class="result-card reading-layout">
+        <div class="result-panel">
 
-            <!-- LEFT -->
-            <div class="reading-left">
+            <div class="result-title">${c.judul}</div>
 
-                <div class="term">
-                    ${r.judul}
+            <div class="case-grid">
+
+                <div class="result-section">
+
+                    <div class="section-heading">Kategori</div>
+
+                    <div class="notes-box">
+        `;
+
+        c.kategori.forEach(k => {
+            html += `<div class="note-item">• ${k}</div>`;
+        });
+
+        html += `
+                    </div>
+
+                    <div class="section-heading">Kesimpulan</div>
+                    <div class="notes-box">${c.kesimpulan}</div>
+                
                 </div>
 
-                <small>
-                    <b>Kategori:</b> ${r.kategori}
-                </small>
-
-                <div class="item">
-                    <a href="${r.link}" target="_blank"
-                       style="color:#4da3ff;">
-                        📂 English File
-                    </a>
-                </div>
-
-            </div>
-
-            <!-- RIGHT -->
-            <div class="reading-right">
-
-                <div class="notes-block">
-
-                    <b>Terjemahan Indonesia:</b><br><br>
-
-                    ${r.kesimpulan}
-
+                <div class="result-section">
+                    <div class="section-heading">Hasil</div>
+                    <div class="notes-box">${c.hasil}</div>
+                    <div class="section-heading">Alasan Legal</div>
+                    <div class="notes-box">${c.alasan_legal}</div>
                 </div>
 
             </div>
@@ -406,40 +405,109 @@ function renderReading(){
         `;
     });
 
-    document.getElementById("readingResults").innerHTML = html;
+    qs("caseResults").innerHTML = html;
+}
+
+function renderReading(){
+    let html = "";
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    const paginated = readingDatabase.slice(start, end);
+
+    paginated.forEach(r => {
+        html += `
+        <div class="result-panel">
+
+            <div class="result-title">${r.judul}</div>
+
+            <div class="reading-grid">
+
+                <!-- LEFT -->
+                <div class="result-section">
+
+                    <div class="section-heading">English Source</div>
+
+                    <div class="meta-box">
+                        <div><b>Kategori:</b>${r.kategori}</div>
+                        <a href="${r.link}" target="_blank" class="file-link">📂 English File</a>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT -->
+                <div class="result-section">
+                    <div class="section-heading">Ringkasan Indonesia</div>
+                    <div class="notes-box">${r.kesimpulan}</div>
+                </div>
+
+            </div>
+
+        </div>
+        `;
+    });
+
+    html += renderPagination();
+
+    qs("readingResults").innerHTML = html;
 }
 
 function renderPagination(){
-    let totalPages = Math.ceil(readingDatabase.length / itemsPerPage);
+    const totalPages = Math.ceil(readingDatabase.length / itemsPerPage);
 
-    let html = `<div style="text-align:center; margin-top:10px;">`
+    return `
+    <div class="pagination">
     
-    if(currentPage > 1){
-        html += `<button onclick="prevPage()">⬅ Prev</button>`;
-    }
+        ${currentPage > 1 ? `<button onclick="prevPage()">⬅ Prev</button>` : ""}
+        <span>Page ${currentPage} / ${totalPages}</span>
+        ${currentPage < totalPages ? `<button onclick="nextPage()">Next ➡</button>` : ""}
 
-    html += ` <span style="margin:0 10px;">Page ${currentPage} / ${totalPages}</span> `;
-
-    if(currentPage < totalPages){
-        html += `<button onclick="nextPage()">Next ➡</button>`;
-    }
-
-    html += `</div>`;
-
-    return html;
+    </div>
+    `;
 }
 
 // ====================
 // CONTROLS
 // ====================
 function nextPage(){
-    currentPage++;
+    const totalPages = Math.ceil(readingDatabase.length / itemsPerPage);
+
+    if(currentPage < totalPages){
+        currentPage++;
+    }
     renderReading();
 }
 
 function prevPage(){
-    currentPage--;
+    if(currentPage > 1){
+        currentPage--;
+    }
     renderReading();
+}
+
+// =================
+// SEARCH RELATED
+// =================
+function searchRelated(term){
+    const input = qs("search");
+
+    input.value = term;
+
+    const query = term.toLowerCase();
+    const results = filterTerms(query);
+
+    renderResults(results, query);
+}
+
+// =================
+// VOICE
+// =================
+function speak(text){
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = /[a-z]/i.test(text) ? "en-US" : "id-ID";
+    speechSynthesis.speak(utterance);
 }
 
 // ====================
@@ -449,160 +517,91 @@ function renderSuggestions(results, containerId, handler, type="term"){
     let html = "";
 
     results.slice(0,5).forEach(r=>{
-        let value, title, subtitle;
+        let value = "";
+        let title = "";
+        let subtitle = "";
 
-        if(type === "law"){
-            value = r.kata_kunci;
-            title = r.kata_kunci;
+        if(type === "term"){
+            value = r.indonesian || "";
+            title = r.indonesian || "";
+            subtitle = r.translations?.primary?.term || "";
+        }
+
+        else if(type === "law"){
+            value = r.kata_kunci || "";
+            title = r.kata_kunci || "";
             subtitle = "UU Internasional";
         }
         else if(type === "case"){
-            value = r.judul;
-            title = r.judul;
-            subtitle = r.kategori;
-        }
-        else {
-            value = r.term_id;
-            title = r.term_id;
-            subtitle = r.indonesian;
+            value = r.judul || "";
+            title = r.judul || "";
+            subtitle = Array.isArray(r.kategori) ? r.kategori.join(", ") : r.kategori || "";
         }
 
         html += `
         <div class="suggestion-item"
-            data-value="${value}"
-            onclick="${handler}(this.dataset.value)">
-            <b>${title}</b><br>
-            <small>${subtitle}</small>
+            onclick="${handler}('${escapeHTML(value)}')">
+            <div class="suggestion-title">${title}</div>
+            <div class="suggestion-subtitle">${subtitle}</div>
         </div>`;
     });
 
-    document.getElementById(containerId).innerHTML = html;
+    qs(containerId).innerHTML = html;
 }
 
 function clearSuggestions(id){
-    document.getElementById(id).innerHTML = "";
+    qs(id).innerHTML = "";
 }
 
 // ==================
-// SELECT (CLICK)
+// SELECT SUGGESTION
 // ==================
 function selectSuggestion(term){
-    let input = document.getElementById("search");
-    let query = term.toLowerCase();
-    
+    const input = qs("search");
     input.value = term;
 
     clearSuggestions("globalSuggestions");
-    document.getElementById("globalSuggestions").style.display = "none";
 
-    let results = filterTerms(term);
+    const query = term.toLowerCase();
+    const results = filterTerms(query);
 
-    updateHistory(results);
     renderResults(results, query);
 }
 
 function selectLaw(keyword){
-    let input = document.getElementById("search");
+    const input = qs("search");
     input.value = keyword;
 
     clearSuggestions("globalSuggestions");
 
-    let results = filterUU(keyword);
+    const results = filterUU(keyword);
     renderUU(results);
 }
 
-function selectCase(judul){
-    let input = document.getElementById("search");
-    input.value = judul;
+function selectCase(title){
+    const input = qs("search");
+    input.value = title;
 
     clearSuggestions("globalSuggestions");
 
-    let results = filterCases(judul);
+    const results = filterCases(title);
     renderCases(results);
-}
-
-// ==================
-// HISTORY
-// ==================
-function updateHistory(results){
-    if(results.length === 0) return;
-
-    let term = results[0]?.indonesian;
-
-    if(term && !searchHistory.includes(term)){
-        searchHistory.unshift(term);
-    }
-
-    searchHistory = searchHistory.slice(0,3);
-    localStorage.setItem("history", JSON.stringify(searchHistory));
-}
-
-function showHistory(){
-    let html = "";
-    
-    searchHistory.forEach(term => {
-        let item = database.find(d => d.term === term);
-        
-        if(item){
-            html += `<div class="result-card">`;
-            html += `<div class="term">${item.term}</div>`;
-
-            if(item.translations){
-                item.translations.forEach(t=>{
-                    html += `<span class="translation">${t}</span>`;
-                });
-            }
-            html += `</div>`;
-        }
-    });
-    document.getElementById("results").innerHTML = html;
 }
 
 // =================
 // CLEAR INPUT
 // =================
 function clearInput(id){
-    let input = document.getElementById(id);
+    let input = qs(id);
     input.value = "";
 
-    if(id === "search"){
+    clearSuggestions("globalSuggestions");
+
+    clearAllResults();
+
+    if(currentFeature === "term"){
         showHistory();
-        clearSuggestions("globalSuggestions");
-    }else{
-        clearResults("lawResults");
-        clearSuggestions("globalSuggestions");
     }
 
     input.focus();
-}
-
-function clearResults(id){
-    document.getElementById(id).innerHTML = "";
-}
-
-// =================
-// VOICE
-// =================
-function speak(text){
-    let utterance = new SpeechSynthesisUtterance(text);
-
-    utterance.lang = /[a-z]/i.test(text) ? "en-US" : "id-ID";
-    
-    speechSynthesis.speak(utterance);
-}
-
-// =================
-// TAB
-// =================
-
-function searchRelated(term){
-    let input = document.getElementById("search");
-
-    input.value = term;
-
-    let query = term.toLowerCase();
-    let results = filterTerms(query);
-
-    clearSuggestions("globalSuggestions");
-    renderResults(results, query);
 }
