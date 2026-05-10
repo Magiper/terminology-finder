@@ -87,9 +87,9 @@
 
             nav{
                 width:100%;
-                padding:30px 20px 10%;
+                padding:30px 20px;
                 display:flex;
-                flex-direction: column;
+                flex-direction: row;
                 justify-content:center;
                 align-items:center;
                 text-align: center;
@@ -121,12 +121,12 @@
             }
 
             .brand-text{
-                font-size: 1rem;
-                font-weight: 700;
-                letter-spacing: 2px;
+                font-size: 1.2rem;
+                font-weight: 800;
+                letter-spacing: 3px;
                 color: #dce7f7;
                 text-transform: uppercase;
-                opacity: 0.9;
+                opacity: 0.95;
             }
 
             .nav-links{
@@ -147,13 +147,13 @@
 
             .hero{
                 width:100%;
-                min-height:88vh;
+                min-height:auto;
                 display:flex;
                 flex-direction:column;
                 justify-content:center;
                 align-items:center;
                 text-align:center;
-                padding:0 20px;
+                padding:20px 20px 60px;
             }
 
             .hero-badge{
@@ -286,6 +286,15 @@
                 line-height:1.7;
             }
 
+            .term-main-title{
+                font-size: 2rem;
+                font-weight: 800;
+                color: #ffd166;
+                margin-bottom: 40px;
+                text-align: center;
+                letter-spacing: 1px;
+            }
+
             .cards{
                 display:grid;
                 grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
@@ -348,6 +357,22 @@
                 margin-top: 40px;
             }
 
+            .result-area{
+                width: 100%;
+                max-width: 1000px;
+                margin-top: 40px;
+                padding: 40px;
+                border-radius: 32px;
+                background: rgba(255,255,255,0.04);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(18px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            }
+
+            .result-area:empty{
+                display: none;
+            }
+
             .footer{
                 padding:60px 8%;
                 border-top:1px solid rgba(255,255,255,0.06);
@@ -387,6 +412,93 @@
                 .section{
                     padding:80px 6%;
                 }
+            }
+
+            .reading-card{
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 28px;
+                padding: 32px;
+                margin-bottom: 32px;
+                backdrop-filter: blur(16px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            }
+
+            .reading-title{
+                text-align: center;
+                font-size: 2rem;
+                font-weight: 800;
+                color: #ffd166;
+                margin-bottom: 32px;
+            }
+
+            .reading-layout{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 28px;
+            }
+
+            .reading-side{
+                background: rgba(255,255,255,0.04);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 20px;
+                padding: 24px;
+            }
+
+            .reading-side-title{
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #7ef0c7;
+                margin-bottom: 14px;
+            }
+
+            .reading-category{
+                margin-bottom: 14px;
+                color: #cfd8e6;
+            }
+
+            .reading-link{
+                display: inline-block;
+                margin-top: 16px;
+                color: #6ba8ff;
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+            .reading-link:hover{
+                text-decoration: underline;
+            }
+
+            .reading-content{
+                line-height: 1.9;
+                color: #e4eaf4;
+            }
+
+            @media(max-width: 900px){
+                .reading-layout{
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .term-result-container{
+                width: 100%;
+                max-width: 950px;
+                margin: 40px auto 0;
+                padding: 40px;
+                border-radius: 32px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(18px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            }
+
+            #globalSuggestions{
+                position: absolute;
+                width: 100%;
+                top: 100%;
+                left: 0;
+                z-index: 1000;
+                margin-top: 10px;
             }
 
         </style>
@@ -434,65 +546,16 @@
                 <div class="chip" onclick="switchFeature(event, 'reading')">📖 Daftar Bacaan</div>
             </div>
 
-            <div class="results-wrapper">
-                <div id="globalSuggestions"></div>
-                <div id="results"></div>
-                <div id="lawResults"></div>
-                <div id="caseResults"></div>
-                <div id="readingResults"></div>
+            <div class="result-area">
+                <div class="results-wrapper">
+                    <div id="globalSuggestions"></div>
+                    <div id="results"></div>
+                    <div id="lawResults"></div>
+                    <div id="caseResults"></div>
+                    <div id="readingResults"></div>
+                </div>
             </div>
         
-        </section>
-
-        <section class="section">
-            <div class="section-title">
-                Featured Legal Terms
-            </div>
-
-            <div class="section-subtitle">
-                Istilah hukum populer yang sering digunakan dalam dunia akademik maupun praktik hukum.
-            </div>
-
-            <div class="cards">
-                <div class="card">
-                    <div class="card-tag">
-                        Criminal Law
-                    </div>
-
-                    <h3>Mens Rea</h3>
-
-                    <p>
-                        Unsur kesalahan batin atau niat pelaku dalam melakukan tindak pidana.
-                    </p>
-
-                </div>
-
-                <div class="card">
-                    <div class="card-tag">
-                        Latin Terminology
-                    </div>
-
-                    <h3>Actus Reus</h3>
-
-                    <p>
-                        Tindakan fisik atau perbuatan nyata yang menjadi unsur terjadinya tindak pidana.
-                    </p>
-
-                </div>
-
-                <div class="card">
-                    <div class="card-tag">
-                        Constitutional Law
-                    </div>
-
-                    <h3>Judicial Review</h3>
-
-                    <p>
-                        Kewenangan lembaga peradilan untuk menguji kesesuaian peraturan terhadap konstitusi.
-                    </p>
-
-                </div>
-            </div>
         </section>
 
         <footer class="footer">
@@ -671,7 +734,10 @@
 
                         let results = filterTerms(query);
 
-                        updateHistory(results);
+                        if(results.length > 0){
+                            updateHistory(results[0].indonesian);
+                        }
+                        
                         renderSuggestions(results, "globalSuggestions", "selectSuggestion");
                     };
 
@@ -777,7 +843,7 @@
                 input.focus();
             }
 
-            startTypingEffect();
+            startTypingEffect("term");
 
         </script>
     </body>
