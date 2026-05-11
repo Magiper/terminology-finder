@@ -936,7 +936,12 @@
                 input.focus();
             }
 
-            startTypingEffect("term");
+            const defaultChip = document.querySelector(".chip.active-chip") || document.querySelector(".chip");
+            if(defaultChip){
+                switchFeature({ currentTarget: defaultChip }, "term");
+            } else {
+                startTypingEffect("term");
+            }
 
         </script>
     </body>
