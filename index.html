@@ -172,9 +172,10 @@
             }
 
             .hero-badge .badge-marquee{
-                display:inline-block;
-                padding-left:100%;
-                animation:badgeMarquee 12s linear infinite;
+                display:inline-flex;
+                gap:60px;
+                will-change:transform;
+                animation:badgeMarquee 10s linear infinite;
             }
 
             @keyframes badgeMarquee{
@@ -182,7 +183,7 @@
                     transform:translateX(0);
                 }
                 100%{
-                    transform:translateX(-100%);
+                    transform:translateX(-50%);
                 }
             }
 
@@ -630,7 +631,10 @@
         <section class="hero">
 
             <div class="hero-badge">
-                <span class="badge-marquee">⚖️ Lintas Bahasa Hukum</span>
+                <span class="badge-marquee" aria-label="Lintas Bahasa Hukum">
+                    <span>⚖️ Lintas Bahasa Hukum</span>
+                    <span aria-hidden="true">⚖️ Lintas Bahasa Hukum</span>
+                </span>
             </div>
 
             <h1>
