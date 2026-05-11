@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Hukumpedia</title>
+        <link rel="icon" type="image/png" href="favicon.png">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +21,7 @@
             :root{
                 --bg: #071018;
                 --bg2: #0d1721;
-                --card: rgba(255, 255, 255, 0.06);
+                --card: rgba(221, 41, 41, 0.06);
                 --border: rgba(255, 255, 255, 0.08);
                 --text:#f5f7fb;
                 --muted:#98a7bb;
@@ -89,11 +90,11 @@
                 width:100%;
                 padding:30px 20px;
                 display:flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content:center;
                 align-items:center;
                 text-align: center;
-                gap: 14px;
+                gap: 10px;
             }
 
             .logo{
@@ -159,12 +160,30 @@
             .hero-badge{
                 background:rgba(255,255,255,0.06);
                 border:1px solid var(--border);
-                padding:10px 18px;
+                width:min(520px, 90vw);
+                padding:10px 22px;
                 border-radius:999px;
                 color:var(--primary2);
                 margin-bottom:24px;
                 backdrop-filter:blur(12px);
                 animation:fadeUp 1s ease;
+                overflow:hidden;
+                white-space:nowrap;
+            }
+
+            .hero-badge .badge-marquee{
+                display:inline-block;
+                padding-left:100%;
+                animation:badgeMarquee 12s linear infinite;
+            }
+
+            @keyframes badgeMarquee{
+                0%{
+                    transform:translateX(0);
+                }
+                100%{
+                    transform:translateX(-100%);
+                }
             }
 
             .hero h1{
@@ -601,18 +620,17 @@
         
         <nav>
 
-            <img src="logo-p.png" class="top-logo">
+            <img src="logo.png" class="top-logo">
             <div class="brand-text">
                 DIREKTORAT JENDERAL PEMASYARAKATAN SULAWESI TENGGARA
             </div>
-            <img src="logo.png" class="top-logo">
         
         </nav>
 
         <section class="hero">
 
             <div class="hero-badge">
-                ⚖️ Lintas Bahasa Hukum
+                <span class="badge-marquee">⚖️ Lintas Bahasa Hukum</span>
             </div>
 
             <h1>
