@@ -17,6 +17,81 @@ const itemsPerPage = 5;
 
 let searchHistory = JSON.parse(localStorage.getItem("history")) || [];
 
+function toArray(value){
+    if(Array.isArray(value)) return value;
+    if(value === undefined || value === null || value === "") return [];
+    return [value];
+}
+
+function parseMaybeJSON(value){
+    if(typeof value !== "string") return value;
+    try{
+        return JSON.parse(value);
+    }
+    catch{
+        return value;
+    }
+}
+
+function normalizeTermItem(item = {}){
+    const parsedTranslations = parseMaybeJSON(item.translations);
+    const termLabel = item.indonesian || item.Indonesian || item.term || "";
+
+    let primary = null;
+    let alternatives = [];
+
+    if(Array.isArray(parsedTranslations)){
+        primary = parsedTranslations[0]
+            ? { term: String(parsedTranslations[0]), context: "general use" }
+            : null;
+        alternatives = parsedTranslations.slice(1).map(t => ({
+            term: String(t),
+            context: "alternative"
+        }));
+    } else if(parsedTranslations && typeof parsedTranslations === "object"){
+        const parsedPrimary = parseMaybeJSON(parsedTranslations.primary);
+        primary = parsedPrimary && typeof parsedPrimary === "object"
+            ? {
+                term: parsedPrimary.term || "",
+                context: parsedPrimary.context || "general use"
+            }
+            : null;
+
+        alternatives = toArray(parseMaybeJSON(parsedTranslations.alternatives))
+            .map(a => {
+                if(typeof a === "string"){
+                    return { term: a, context: "alternative" };
+                }
+                if(a && typeof a === "object"){
+                    return {
+                        term: a.term || "",
+                        context: a.context || "alternative"
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    }
+
+    const notes = toArray(parseMaybeJSON(item.notes)).map(String);
+    const relatedTerms = toArray(parseMaybeJSON(item.related_terms)).map(String);
+
+    return {
+        ...item,
+        indonesian: termLabel,
+        translations: {
+            primary,
+            alternatives
+        },
+        notes,
+        related_terms: relatedTerms
+    };
+}
+
+function normalizeTermDatabase(rows){
+    return toArray(rows).map(normalizeTermItem).filter(item => item.indonesian);
+}
+
 // =====================
 // LOAD DATA
 // =====================
@@ -39,7 +114,7 @@ async function fetchTable(table){
 }
 
 async function initialize(){
-    database = await fetchTable( "term_db" );
+    database = normalizeTermDatabase(await fetchTable("term_db"));
     uuDatabase = await fetchTable( "uu_internasional" );
     caseDatabase = await fetchTable( "case_db" );
     readingDatabase = await fetchTable( "reading_db" );
