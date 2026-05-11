@@ -158,6 +158,8 @@
             }
 
             .hero-badge{
+                container-type:inline-size;
+                container-name:hero-badge;
                 background:rgba(255,255,255,0.06);
                 border:1px solid var(--border);
                 width:min(520px, 90vw);
@@ -168,22 +170,35 @@
                 backdrop-filter:blur(12px);
                 animation:fadeUp 1s ease;
                 overflow:hidden;
+            }
+
+            /* Single-line marquee: one copy only; reset happens off-screen */
+            .badge-marquee-viewport{
+                width:100%;
+                overflow:hidden;
+            }
+
+            .badge-marquee-text{
+                display:inline-block;
                 white-space:nowrap;
-            }
-
-            .hero-badge .badge-marquee{
-                display:inline-flex;
-                gap:60px;
                 will-change:transform;
-                animation:badgeMarquee 10s linear infinite;
+                backface-visibility:hidden;
+                animation:badgeMarqueeScroll var(--badge-marquee-duration, 14s) linear infinite;
             }
 
-            @keyframes badgeMarquee{
-                0%{
-                    transform:translateX(0);
+            @keyframes badgeMarqueeScroll{
+                from{
+                    transform:translate3d(100cqw, 0, 0);
                 }
-                100%{
-                    transform:translateX(-50%);
+                to{
+                    transform:translate3d(calc(-100% - 100cqw), 0, 0);
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce){
+                .badge-marquee-text{
+                    animation:none;
+                    transform:none;
                 }
             }
 
@@ -631,10 +646,9 @@
         <section class="hero">
 
             <div class="hero-badge">
-                <span class="badge-marquee" aria-label="Lintas Bahasa Hukum">
-                    <span>⚖️ Lintas Bahasa Hukum</span>
-                    <span aria-hidden="true">⚖️ Lintas Bahasa Hukum</span>
-                </span>
+                <div class="badge-marquee-viewport">
+                    <span class="badge-marquee-text">⚖️ Lintas Bahasa Hukum</span>
+                </div>
             </div>
 
             <h1>
