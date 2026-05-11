@@ -173,7 +173,7 @@ function filterTerms(query){
     query = query.toLowerCase();
     
     return database.filter(item => {
-        const termIdMatch = item.term_id?.toLowerCase().includes(query);
+        const termIdMatch = String(item.term_id || "").toLowerCase().includes(query);
         const indo = item.indonesian?.toLowerCase().includes(query);
         const primary = item.translations?.primary?.term?.toLowerCase().includes(query);
         const alternatives = item.translations?.alternatives || [];
