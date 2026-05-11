@@ -96,7 +96,7 @@ function normalizeTermDatabase(rows){
 // LOAD DATA
 // =====================
 async function fetchTable(table){
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, {
         method: "GET",
         headers: {
             "apikey": SUPABASE_KEY,
@@ -106,11 +106,15 @@ async function fetchTable(table){
     });
 
     if(!res.ok){
-        console.error(`Failed loading ${table}`);
-        return;
+        console.error(`Failed loading ${table}`, await res.text());
+        return [];
     }
 
-    return await res.json();
+    const rows = await res.json();
+    if(Array.isArray(rows) && rows.length === 0){
+        console.warn(`Loaded 0 rows from ${table}. Check RLS policy/public access.`);
+    }
+    return Array.isArray(rows) ? rows : [];
 }
 
 async function initialize(){
