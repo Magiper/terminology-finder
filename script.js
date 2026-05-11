@@ -39,10 +39,10 @@ async function fetchTable(table){
 }
 
 async function initialize(){
-    database = await fetchTable( "term-db" );
+    database = await fetchTable( "term_db" );
     uuDatabase = await fetchTable( "uu_internasional" );
     caseDatabase = await fetchTable( "case_db" );
-    readingDatabase = await fetchTable( "reading-db" );
+    readingDatabase = await fetchTable( "reading_db" );
     showHistory();
 }
 
