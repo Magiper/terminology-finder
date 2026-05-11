@@ -36,6 +36,7 @@ function parseMaybeJSON(value){
 function normalizeTermItem(item = {}){
     const parsedTranslations = parseMaybeJSON(item.translations);
     const termLabel = item.indonesian || item.Indonesian || item.term || "";
+    const termId = item.term_id || item.termId || "";
 
     let primary = null;
     let alternatives = [];
@@ -78,6 +79,7 @@ function normalizeTermItem(item = {}){
 
     return {
         ...item,
+        term_id: termId,
         indonesian: termLabel,
         translations: {
             primary,
@@ -171,7 +173,7 @@ function filterTerms(query){
     query = query.toLowerCase();
     
     return database.filter(item => {
-
+        const termIdMatch = item.term_id?.toLowerCase().includes(query);
         const indo = item.indonesian?.toLowerCase().includes(query);
         const primary = item.translations?.primary?.term?.toLowerCase().includes(query);
         const alternatives = item.translations?.alternatives || [];
@@ -180,7 +182,7 @@ function filterTerms(query){
             a.term?.toLowerCase().includes(query)
         );
 
-        return indo || primary || alt;
+        return termIdMatch || indo || primary || alt;
     });
 }
 
@@ -250,11 +252,12 @@ function renderResults(results, query=""){
     results.forEach(r =>{
         const primary = r.translations?.primary;
         const alternatives = r.translations?.alternatives || [];
+        const titleText = r.term_id ? `${r.term_id} - ${r.indonesian}` : r.indonesian;
 
         html += `
         <div class="result-panel">
             <div class="result-title">
-                ${highlight(r.indonesian, query)}
+                ${highlight(titleText, query)}
             </div>
 
             <div class="result-grid">
@@ -636,8 +639,10 @@ function renderSuggestions(results, containerId, handler, type="term"){
 
         if(type === "term"){
             value = r.indonesian || "";
-            title = r.indonesian || "";
-            subtitle = r.translations?.primary?.term || "";
+            title = r.term_id ? `${r.term_id} - ${r.indonesian}` : (r.indonesian || "");
+            subtitle = [r.translations?.primary?.term, r.term_id ? `ID: ${r.term_id}` : ""]
+                .filter(Boolean)
+                .join(" • ");
         }
 
         else if(type === "law"){
