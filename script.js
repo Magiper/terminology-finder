@@ -540,7 +540,7 @@ function renderReading(){
                 <!-- LEFT -->
                 <div class="reading-side">
 
-                    <div class="reading-side-title">📂 English Source</div>
+                    <div class="reading-side-title">📂 Dokumen</div>
 
                     <div class="reading-category">
                         <strong>Kategori:</strong>
@@ -548,7 +548,8 @@ function renderReading(){
                         ${r.kategori}
                     </div>
 
-                    <a href="${r.link}" target="_blank" class="reading-link">📂 Open English File</a>
+                    <a href="${r.link}" target="_blank" class="reading-link">📂 Buka Dokumen</a>
+                    <a href="${r.eng_link}" target="_blank" class="reading-eng-link">📂 Open File</a>
 
                 </div>
 
