@@ -381,76 +381,77 @@ function renderResults(results, query=""){
     qs("results").innerHTML = html;
 }
 
+function conventionsFromUURow(row){
+    if(Array.isArray(row.uu_internasional) && row.uu_internasional.length){
+        return row.uu_internasional;
+    }
+    if(Array.isArray(row.articles) && row.nama_konvensi){
+        return [{
+            nama_konvensi: row.nama_konvensi,
+            articles: row.articles,
+            relevansi: row.relevansi ?? ""
+        }];
+    }
+    return [];
+}
+
 function renderUU(results){
     let html = "";
 
     results.forEach(r => {
-
-        r.uu_internasional.forEach(u => {
-
+        conventionsFromUURow(r).forEach(u => {
             html += `
-
             <div class="result-panel">
 
                 <div class="result-title">${u.nama_konvensi}</div>
-                
+
                 <div class="reading-layout">
 
                     <!-- LEFT -->
-                    <div class="reading-side">
-
+                    <div class="reading-side law-reading-col">
                         <div class="reading-side-title">
                             📜 Articles
-                        </div>
-            `;
+                        </div>`;
 
-            u.articles.forEach(article => {
-
+            toArray(u.articles).forEach(article => {
                 html += `
-
-                <div class="article-card">
-
-                    <div class="article-heading">
-                        ${article.article}
-                    </div>
-
-                    <div class="article-content">
-                        ${article.isi}
-                    </div>
-
-                </div>
-                `;
+                        <div class="article-card">
+                            <div class="article-heading">
+                                ${article.article}
+                            </div>
+                            <div class="article-content">
+                                ${article.isi ?? ""}
+                            </div>
+                        </div>`;
             });
 
             html += `
                     </div>
 
                     <!-- RIGHT -->
-                    <div class="reading-side">
-                        <div class="reading-side-title">🌎 Translation</div>
-                    </div>
+                    <div class="reading-side law-reading-col">
+                        <div class="reading-side-title">🌎 Translation</div>`;
 
-            `;
-
-            u.articles.forEach(article => {
-
+            toArray(u.articles).forEach(article => {
                 html += `
-                
-                    <div class="translation-box">
-                        ${article.terjemahan}
-                    </div>
-                `;
+                        <div class="translation-box">
+                            <div class="article-heading">
+                                ${article.article}
+                            </div>
+                            <div class="article-content translation-content">
+                                ${article.terjemahan ?? ""}
+                            </div>
+                        </div>`;
             });
 
             html += `
-                        <div class="relevansi-box">
-                            <strong>Relevansi:</strong>
-                            
-                            <br><br>
-                            
-                            ${u.relevansi}
-                        </div>
                     </div>
+                </div>
+
+                <div class="relevansi-box">
+                    <strong>Relevansi:</strong>
+                    <br><br>
+                    ${u.relevansi ?? ""}
                 </div>
             </div>
             `;
