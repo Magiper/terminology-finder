@@ -183,15 +183,20 @@
                 white-space:nowrap;
                 will-change:transform;
                 backface-visibility:hidden;
-                animation:badgeMarqueeScroll var(--badge-marquee-duration, 8s) linear infinite;
+                /* ~2s empty hold at end when --badge-marquee-duration is 14s (see 85.714% keyframe). */
+                animation:badgeMarqueeScroll var(--badge-marquee-duration, 14s) linear infinite;
             }
 
             @keyframes badgeMarqueeScroll{
                 from{
                     transform:translate3d(100cqw, 0, 0);
                 }
+                /* Text fully off left; hold until loop (≈2s when duration is 14s) */
+                85.714%{
+                    transform:translate3d(-100%, 0, 0);
+                }
                 to{
-                    transform:translate3d(calc(-100% - 100cqw), 0, 0);
+                    transform:translate3d(-100%, 0, 0);
                 }
             }
 
@@ -367,8 +372,14 @@
                 border-radius: 20px;
                 padding: 24px;
                 line-height: 1.9;
-                margin-top: 20px;
-                flex: 1;
+                margin-top: 24px;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .translation-content{
+                color: #dce7f7;
             }
 
             .cards{
@@ -536,6 +547,11 @@
                 border: 1px solid rgba(255, 255, 255, 0.06);
                 border-radius: 20px;
                 padding: 24px;
+            }
+
+            /* UU: stack cards from top; avoid space-between gaps between uneven columns */
+            .reading-side.law-reading-col{
+                justify-content: flex-start;
             }
 
             .reading-side-title{
