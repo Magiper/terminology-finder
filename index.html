@@ -183,20 +183,17 @@
                 white-space:nowrap;
                 will-change:transform;
                 backface-visibility:hidden;
-                /* ~2s empty hold at end when --badge-marquee-duration is 14s (see 85.714% keyframe). */
                 animation:badgeMarqueeScroll var(--badge-marquee-duration, 14s) linear infinite;
             }
 
+            /* One segment: no mid-keyframe hold (that held while a subpixel sliver of text was still visible). */
             @keyframes badgeMarqueeScroll{
                 from{
                     transform:translate3d(100cqw, 0, 0);
                 }
-                /* Text fully off left; hold until loop (≈2s when duration is 14s) */
-                85.714%{
-                    transform:translate3d(-100%, 0, 0);
-                }
                 to{
-                    transform:translate3d(-100%, 0, 0);
+                    /* Slightly past -100% so rounding never leaves glyphs visible before the loop jump */
+                    transform:translate3d(calc(-100% - 0.25em), 0, 0);
                 }
             }
 
