@@ -176,41 +176,40 @@
                 background: rgba(255,255,255,0.06);
                 border: 1px solid var(--border);
                 width: min(520px, 90vw);
+                height: 52px;
                 border-radius: 999px;
                 margin-bottom: 24px;
                 backdrop-filter: blur(12px);
                 overflow: hidden;
-                padding: 12px 0;
+                position: relative;
+                display: flex;
+                align-items: center;
             }
 
             .badge-marquee{
                 width: 100%;
                 overflow: hidden;
                 position: relative;
-                mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            }
-
-            .badge-track{
-                display: flex;
-                width: max-content;
-                animation: smoothMarquee 12s linear infinite;
             }
 
             .badge-item{
-                flex-shrink: 0;
-                padding-right: 80px;
+                position: relative;
+                display: inline-block;
                 white-space: nowrap;
                 color: var(--primary2);
-                font-weight: 600;
+                font-weight: 700;
+                padding-left: 100%;
+                animation: singleMarquee 10s linear infinite;
+                will-change: transform;  
             }
 
-            @keyframes smoothMarquee{
-                from{
+            @keyframes singleMarquee{
+                0%{
                     transform: translateX(0);
                 }
 
-                to{
-                    transform: translateX(calc(-50%));
+                100%{
+                    transform: translateX(calc(-100% - 100vw));
                 }
             }
 
@@ -689,12 +688,7 @@
 
             <div class="hero-badge">
                 <div class="badge-marquee">
-                    <div class="badge-track">
-
-                        <span class="badge-item">⚖️ Lintas Bahasa Hukum</span>
-                        <span class="badge-item">⚖️ Lintas Bahasa Hukum</span>
-
-                    </div>
+                    <span class="badge-item">⚖️ Lintas Bahasa Hukum</span>
                 </div>
             </div>
 
