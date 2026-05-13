@@ -172,28 +172,45 @@
                 overflow:hidden;
             }
 
-            /* Single-line marquee: one copy only; reset happens off-screen */
-            .badge-marquee-viewport{
-                width:100%;
-                overflow:hidden;
+            .hero-badge{
+                background: rgba(255,255,255,0.06);
+                border: 1px solid var(--border);
+                width: min(520px, 90vw);
+                border-radius: 999px;
+                margin-bottom: 24px;
+                backdrop-filter: blur(12px);
+                overflow: hidden;
+                padding: 12px 0;
             }
 
-            .badge-marquee-text{
-                display:inline-block;
-                white-space:nowrap;
-                will-change:transform;
-                backface-visibility:hidden;
-                animation:badgeMarqueeScroll var(--badge-marquee-duration, 14s) linear infinite;
+            .badge-marquee{
+                width: 100%;
+                overflow: hidden;
+                position: relative;
+                mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
             }
 
-            /* One segment: no mid-keyframe hold (that held while a subpixel sliver of text was still visible). */
-            @keyframes badgeMarqueeScroll{
+            .badge-track{
+                display: flex;
+                width: max-content;
+                animation: smoothMarquee 12s linear infinite;
+            }
+
+            .badge-item{
+                flex-shrink: 0;
+                padding-right: 80px;
+                white-space: nowrap;
+                color: var(--primary2);
+                font-weight: 600;
+            }
+
+            @keyframes smoothMarquee{
                 from{
-                    transform:translate3d(100cqw, 0, 0);
+                    transform: translateX(0);
                 }
+
                 to{
-                    /* Slightly past -100% so rounding never leaves glyphs visible before the loop jump */
-                    transform:translate3d(calc(-100% - 0.25em), 0, 0);
+                    transform: translateX(calc(-50%));
                 }
             }
 
@@ -671,8 +688,13 @@
         <section class="hero">
 
             <div class="hero-badge">
-                <div class="badge-marquee-viewport">
-                    <span class="badge-marquee-text">⚖️ Lintas Bahasa Hukum</span>
+                <div class="badge-marquee">
+                    <div class="badge-track">
+
+                        <span class="badge-item">⚖️ Lintas Bahasa Hukum</span>
+                        <span class="badge-item">⚖️ Lintas Bahasa Hukum</span>
+
+                    </div>
                 </div>
             </div>
 
